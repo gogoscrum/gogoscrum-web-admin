@@ -1,0 +1,45 @@
+{
+  "issueTypes": {
+    "REQUIREMENT": "Feature",
+    "TASK": "Task",
+    "BUG": "Bug"
+  },
+  "issuePriorities": {
+    "CRITICAL": "Critical",
+    "MAJOR": "Major",
+    "NORMAL": "Normal",
+    "LOW": "Low",
+    "TRIVIAL": "Trivial"
+  },
+  "historyActionTypes": {
+    "CREATE": "Created",
+    "UPDATE": "Updated",
+    "DELETE": "Deleted"
+  },
+  "fileTargetTypes": {
+    "PROJECT_FILE": "Project file",
+    "PROJECT_AVATAR": "Project avatar",
+    "USER_AVATAR": "User avatar",
+    "ISSUE_ATTACHMENT": "Issue",
+    "TEXT_EDITOR": "Text editor",
+    "TEST_CASE_ATTACHMENT": "Test case",
+    "TEST_RUN_ATTACHMENT": "Test run"
+  },
+  "fileTypes": {
+    "IMAGE": "Image",
+    "AUDIO": "Audio",
+    "VIDEO": "Video",
+    "WORD": "Word",
+    "PDF": "PDF",
+    "PPT": "PPT",
+    "EXCEL": "Excel",
+    "ZIP": "ZIP",
+    "RAR": "RAR",
+    "OTHER": "Other"
+  },
+  "storageProviders": {
+    "LOCAL": "Local",
+    "EXTERNAL": "External",
+    "ALIYUN": "Aliyun"
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "keywords": "free,scrum,agile,backlog,board,software,bug,issue,sprint,project",
+    "description": "Keep track of everything on sprint board, drag and drop to update task status, report and track bugs, view sprint burn-down chart, share files and documents - all features needed by an agile team, free for everyone with unlimited number of projects and team members",
+    "title": "gogoscrum - Lightweight Open-Source Scrum Tool"
+  },
+  "common": {
+    "close": "Close",
+    "refresh": "Refresh",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "download": "Download",
+    "save": "Save",
+    "actions": "Actions",
+    "createdBy": "Created by",
+    "createdTime": "Created time",
+    "msg": {
+      "formValidationFail": "Please fill out all required fields",
+      "updatedTip": "{nickname} updated at {time}"
+    },
+    "filter": {
+      "noMatch": "No matched results",
+      "tooManyMatches": "Too many matches, please refine the search"
+    }
+  },
+  "signin": {
+    "title": "Admin sign in",
+    "username": "User name",
+    "password": "Password",
+    "btn": "Sign in",
+    "rememberme": "Remember me in 10 days",
+    "msg": {
+      "missingUsername": "Please input your user name",
+      "missingPassword": "Please input your password",
+      "badCrendential": "Wrong user name or password",
+      "notAdmin": "You are not an admin"
+    }
+  },
+  "baseLayout": {
+    "header": {
+      "signout": "Sign out"
+    },
+    "footer": {
+      "company": "Copyright © Hangzhou Shimi Network Technology"
+    }
+  },
+  "adminLayout": {
+    "menu": {
+      "project": "Projects",
+      "user": "Users",
+      "issue": "Issues",
+      "file": "Files",
+      "doc": "Documents"
+    }
+  },
+  "issueEdit": {
+    "copyCode": "Copy issue code",
+    "namePlaceholder": "Please input issue title",
+    "remark": "Description",
+    "remarkPlaceholder": "Please describe the issue in more detail",
+    "assignee": "Assignee",
+    "createdBy": "Reported by",
+    "createdTime": "Created at",
+    "assigneePlaceholder": "Select assignee",
+    "status": "Status",
+    "statusPlaceholder": "Select status",
+    "issueType": "Type",
+    "issueTypePlaceholder": "Select type",
+    "sprint": "Sprint",
+    "sprintPlaceholder": "Select sprint",
+    "priority": "Priority",
+    "priorityPlaceholder": "Select priority",
+    "storyPoints": "Story point",
+    "storyPointsPlaceholder": "Select story point",
+    "estimatedHours": "Est. hours",
+    "actualHours": "Actual hours",
+    "hoursPlaceholder": "Please input hours",
+    "testCase": "Test case",
+    "testCasePlaceholder": "Link to a test case",
+    "testPlan": "Test plan",
+    "testPlanPlaceholder": "Link to a test plan",
+    "tag": "Tags",
+    "dueTime": "Due date",
+    "dueTimePlaceholder": "Select date and time",
+    "component": "Component",
+    "componentPlaceholder": "Select component",
+    "files": "Attachments",
+    "links": "Linked issues",
+    "comments": "Comments",
+    "history": "History",
+    "details": "Details",
+    "msg": {
+      "issueCodeCopied": "Issue code copied to clipboard"
+    }
+  },
+  "transferProject": {
+    "dialogTitle": "Transfer project",
+    "owner": "Owner",
+    "ownerPlaceholder": "Please select new owner",
+    "msg": {
+      "ownerMissing": "Please select the new owner",
+      "transferConfirmTitle": "Transfer confirm",
+      "transferConfirmMsg": "You are about to transfer project <strong class=\"red\">\"{projectName}\"</strong> to <strong>{newOwnerName}</strong>. The original owner will not be able to manage this project after transfer. Are you sure to proceed?",
+      "transferSuccess": "Project \"{projectName}\" transferred to \"{newOwnerName}\" successfully"
+    }
+  },
+  "issueList": {
+    "header": {
+      "search": "Search",
+      "count": "{count} issues"
+    },
+    "list": {
+      "code": "Code",
+      "name": "Name",
+      "filesCount": "{count} files",
+      "commentsCount": "{count} comments",
+      "linksCount": "{count} links",
+      "projectName": "Project",
+      "component": "Component",
+      "storyPoints": "Points",
+      "priority": "Priority",
+      "sprint": "Sprint",
+      "status": "Status",
+      "assignee": "Assignee",
+      "emptyMsg": "No issue in system"
+    }
+  },
+  "fileList": {
+    "header": {
+      "count": "{count}  files",
+      "search": "Search"
+    },
+    "list": {
+      "name": "Name",
+      "fileType": "Type",
+      "targetType": "Source",
+      "size": "Size",
+      "storage": "Storage",
+      "empty": "No matched files"
+    }
+  },
+  "docList": {
+    "header": {
+      "docCount": "{count} documents",
+      "search": "Search"
+    },
+    "list": {
+      "name": "Name",
+      "length": "Length",
+      "public": "Public",
+      "empty": "No document"
+    }
+  },
+  "projectList": {
+    "header": {
+      "projectCount": "{count} projects",
+      "search": "Search"
+    },
+    "list": {
+      "name": "Name",
+      "code": "Code",
+      "lastIssueSeq": "Issues",
+      "fileCount": "Files",
+      "totalFileSize": "Total",
+      "owner": "Owner",
+      "transfer": "Transfer",
+      "archived": "Archived",
+      "noProject": "There is no project in the system"
+    },
+    "msg": {
+      "delConfirmTitle": "Delete project",
+      "delConfirmMsg": "You are about to delete project <strong class=\"red\">\"{projectName}\"</strong>, all data in the project will not be accessible after deletion. Are you sure to proceed?",
+      "delSuccess": "Project \"{projectName}\" deleted"
+    }
+  },
+  "userList": {
+    "header": {
+      "userCount": "{count} users",
+      "search": "Search"
+    },
+    "list": {
+      "nickname": "Nickname",
+      "username": "Username",
+      "admin": "Admin",
+      "disabled": "Disabled",
+      "lastLoginTime": "Last login",
+      "noUser": "There is no user in the system"
+    },
+    "actions": {
+      "disableUser": "Disable user",
+      "enableUser": "Enable user",
+      "setAdmin": "Set as admin",
+      "revokeAdmin": "Revoke admin"
+    },
+    "msg": {
+      "disableSuccess": "User \"{nickname}\" disabled",
+      "enableSuccess": "User \"{nickname}\" enabled",
+      "setAdminSuccess": "User \"{nickname}\" set as admin",
+      "revokeAdminSuccess": "User \"{nickname}\" admin revoked"
+    }
+  }
+}

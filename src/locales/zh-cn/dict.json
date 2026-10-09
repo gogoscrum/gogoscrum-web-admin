@@ -1,0 +1,45 @@
+{
+  "issueTypes": {
+    "REQUIREMENT": "需求",
+    "TASK": "任务",
+    "BUG": "缺陷"
+  },
+  "issuePriorities": {
+    "CRITICAL": "关键",
+    "MAJOR": "重要",
+    "NORMAL": "普通",
+    "LOW": "较低",
+    "TRIVIAL": "最低"
+  },
+  "historyActionTypes": {
+    "CREATE": "创建",
+    "UPDATE": "更新",
+    "DELETE": "删除"
+  },
+  "fileTargetTypes": {
+    "PROJECT_FILE": "项目文件",
+    "PROJECT_AVATAR": "项目头像",
+    "USER_AVATAR": "用户头像",
+    "ISSUE_ATTACHMENT": "任务附件",
+    "TEXT_EDITOR": "文本编辑器",
+    "TEST_CASE_ATTACHMENT": "测试用例",
+    "TEST_RUN_ATTACHMENT": "测试运行"
+  },
+  "fileTypes": {
+    "IMAGE": "图片",
+    "AUDIO": "音频",
+    "VIDEO": "视频",
+    "WORD": "Word",
+    "PDF": "PDF",
+    "PPT": "PPT",
+    "EXCEL": "Excel",
+    "ZIP": "ZIP",
+    "RAR": "RAR",
+    "OTHER": "其他"
+  },
+  "storageProviders": {
+    "LOCAL": "本地存储",
+    "EXTERNAL": "外部链接",
+    "ALIYUN": "阿里云"
+  }
+}

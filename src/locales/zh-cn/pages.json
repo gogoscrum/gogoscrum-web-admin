@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "keywords": "免费,scrum,agile,backlog,敏捷,看板,软件开发,bug管理,任务,迭代",
+    "description": "开源轻量级Scrum敏捷管理工具，从待办事项列表到迭代任务看板、故事点估算、Bug跟踪和燃尽图报表，轻松管理Scrum敏捷开发流程的所有环节。",
+    "title": "gogoscrum - 开源轻量级免费Scrum敏捷项目管理工具"
+  },
+  "common": {
+    "close": "关闭",
+    "refresh": "刷新",
+    "delete": "删除",
+    "cancel": "取消",
+    "download": "下载",
+    "save": "保存",
+    "actions": "操作",
+    "createdBy": "创建者",
+    "createdTime": "创建时间",
+    "msg": {
+      "formValidationFail": "请填写必要的表单信息",
+      "updatedTip": "{nickname} 更新于 {time}"
+    },
+    "filter": {
+      "noMatch": "没有匹配的结果",
+      "tooManyMatches": "匹配结果过多，请细化搜索条件"
+    }
+  },
+  "signin": {
+    "title": "管理员登录",
+    "username": "用户名",
+    "password": "密码",
+    "btn": "登录",
+    "rememberme": "10天内免登录",
+    "msg": {
+      "missingUsername": "请输入用户名",
+      "missingPassword": "请输入密码",
+      "badCrendential": "用户名或者密码错误",
+      "notAdmin": "您不是管理员"
+    }
+  },
+  "baseLayout": {
+    "header": {
+      "signout": "退出登录"
+    },
+    "footer": {
+      "company": "版权所有 © 杭州拾米网络科技有限公司"
+    }
+  },
+  "adminLayout": {
+    "menu": {
+      "project": "项目",
+      "user": "用户",
+      "issue": "任务",
+      "file": "文件",
+      "doc": "文档"
+    }
+  },
+  "issueEdit": {
+    "copyCode": "复制任务编号",
+    "namePlaceholder": "请输入任务标题",
+    "remark": "描述",
+    "remarkPlaceholder": "请输入任务描述",
+    "assignee": "执行者",
+    "createdBy": "创建者",
+    "createdTime": "创建时间",
+    "assigneePlaceholder": "选择任务执行者",
+    "status": "状态",
+    "statusPlaceholder": "设置任务状态",
+    "issueType": "类型",
+    "issueTypePlaceholder": "设置任务类型",
+    "sprint": "迭代",
+    "sprintPlaceholder": "设置迭代",
+    "priority": "优先级",
+    "priorityPlaceholder": "设置任务优先级",
+    "storyPoints": "故事点",
+    "storyPointsPlaceholder": "选择故事点数",
+    "estimatedHours": "预估工时",
+    "actualHours": "实际工时",
+    "hoursPlaceholder": "请输入工时",
+    "testCase": "测试用例",
+    "testCasePlaceholder": "关联测试用例",
+    "testPlan": "测试计划",
+    "testPlanPlaceholder": "关联测试计划",
+    "tag": "标签",
+    "dueTime": "截止时间",
+    "dueTimePlaceholder": "选择日期和时间",
+    "component": "功能模块",
+    "componentPlaceholder": "选择功能模块",
+    "files": "附件",
+    "links": "关联任务",
+    "comments": "评论",
+    "history": "历史",
+    "details": "详情",
+    "msg": {
+      "issueCodeCopied": "任务编号已复制到剪贴板"
+    }
+  },
+  "transferProject": {
+    "dialogTitle": "移交项目",
+    "owner": "所有者",
+    "ownerPlaceholder": "请选择新的所有者",
+    "msg": {
+      "ownerMissing": "请选择新的项目所有者",
+      "transferConfirmTitle": "确认移交",
+      "transferConfirmMsg": "您正在将项目 <strong class=\"red\">“{projectName}”</strong> 移交给 <strong>{newOwnerName}</strong>，项目移交后原所有者将不再拥有该项目的管理权限，是否继续？",
+      "transferSuccess": "项目 \"{projectName}\" 成功移交给 \"{newOwnerName}\""
+    }
+  },
+  "issueList": {
+    "header": {
+      "search": "查找任务",
+      "count": "{count} 个任务"
+    },
+    "list": {
+      "code": "编号",
+      "name": "名称",
+      "filesCount": "{count} 个附件",
+      "commentsCount": "{count} 条评论",
+      "linksCount": "{count} 个关联",
+      "projectName": "项目",
+      "component": "功能模块",
+      "storyPoints": "故事点",
+      "priority": "优先级",
+      "sprint": "迭代",
+      "status": "状态",
+      "assignee": "执行者",
+      "emptyMsg": "系统中还没有任何任务"
+    }
+  },
+  "fileList": {
+    "header": {
+      "count": "{count} 个文件",
+      "search": "查找文件"
+    },
+    "list": {
+      "name": "名称",
+      "fileType": "类型",
+      "targetType": "来源",
+      "size": "大小",
+      "storage": "存储位置",
+      "empty": "没有任何文件"
+    }
+  },
+  "docList": {
+    "header": {
+      "docCount": "{count} 个文档",
+      "search": "查找文档"
+    },
+    "list": {
+      "name": "名称",
+      "length": "长度",
+      "public": "公开",
+      "empty": "没有任何文档"
+    }
+  },
+  "projectList": {
+    "header": {
+      "projectCount": "{count} 个项目",
+      "search": "查找项目"
+    },
+    "list": {
+      "name": "名称",
+      "code": "代码",
+      "lastIssueSeq": "任务号",
+      "fileCount": "文件数",
+      "totalFileSize": "总尺寸",
+      "owner": "所有者",
+      "transfer": "移交",
+      "archived": "已归档",
+      "noProject": "系统中还没有任何项目"
+    },
+    "msg": {
+      "delConfirmTitle": "删除项目",
+      "delConfirmMsg": "您即将删除项目 <strong class=\"red\">\"{projectName}\"</strong>，删除后将无法再访问该项目及其数据，是否继续？",
+      "delSuccess": "项目 \"{projectName}\" 删除成功"
+    }
+  },
+  "userList": {
+    "header": {
+      "userCount": "{count} 个用户",
+      "search": "查找用户"
+    },
+    "list": {
+      "nickname": "昵称",
+      "username": "用户名",
+      "admin": "管理员",
+      "disabled": "已封禁",
+      "lastLoginTime": "最后登录",
+      "noUser": "系统中还没有任何用户"
+    },
+    "actions": {
+      "disableUser": "封禁用户",
+      "enableUser": "解除封禁",
+      "setAdmin": "设为管理员",
+      "revokeAdmin": "撤销管理员"
+    },
+    "msg": {
+      "disableSuccess": "用户 \"{nickname}\" 已封禁",
+      "enableSuccess": "用户 \"{nickname}\" 已解禁",
+      "setAdminSuccess": "已将 \"{nickname}\" 设为管理员",
+      "revokeAdminSuccess": "已撤销 \"{nickname}\" 的管理员权限"
+    }
+  }
+}
