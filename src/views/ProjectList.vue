@@ -46,7 +46,7 @@
             <div class="flex items-center">
               <Avatar
                 :name="scope.row.name"
-                :size="30"
+                :size="24"
                 :src="scope.row.avatarUrl"
                 :rounded="false"
                 class="mr-2"></Avatar>
@@ -91,7 +91,9 @@
           min-width="80"
           align="right">
           <template #default="scope">
-            {{ scope.row.lastIssueSeq }}
+            <router-link :to="{ name: 'IssueList', query: { projectId: scope.row.id } }">
+              {{ scope.row.lastIssueSeq }}
+            </router-link>
           </template>
         </el-table-column>
         <el-table-column
@@ -101,7 +103,9 @@
           min-width="80"
           align="right">
           <template #default="scope">
-            {{ scope.row.fileCount }}
+            <router-link :to="{ name: 'FileList', query: { projectId: scope.row.id } }">
+              {{ scope.row.fileCount }}
+            </router-link>
           </template>
         </el-table-column>
         <el-table-column

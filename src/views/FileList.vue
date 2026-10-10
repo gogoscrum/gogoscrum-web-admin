@@ -1,7 +1,11 @@
 <template>
   <div class="file-list-page page">
     <div class="filter-row">
-      <div class="left-part"></div>
+      <div class="left-part">
+        <el-tag v-if="filter.projectId" closable type="primary" @close="resetProjectId">
+          {{ `Project ${filter.projectId}` }}
+        </el-tag>
+      </div>
       <div class="right-part">
         <div class="summary-info">
           <el-icon v-if="loading" class="is-loading refresh-btn">
@@ -208,6 +212,7 @@ export default {
       imgPreviewIndex: null,
       previewingImg: false,
       filter: {
+        projectId: null,
         folder: false,
         fileTypes: [],
         targetTypes: [],
@@ -226,7 +231,9 @@ export default {
       targetTypeFilters: []
     }
   },
-  created() {},
+  created() {
+    this.filter.projectId = this.$route.query.projectId || null
+  },
   mounted() {
     this.initColumnFilters()
     this.loadFiles()
@@ -349,7 +356,6 @@ export default {
       this.initImgPreviewSrcList(file)
       this.previewingImg = true
     },
-
     initImgPreviewSrcList(file) {
       this.imgPreviewSrcList = []
       this.imgPreviewIndex = 0
@@ -365,6 +371,13 @@ export default {
     },
     closeImgPreview() {
       this.previewingImg = false
+    },
+    resetProjectId() {
+      this.filter.projectId = null
+      this.keywordChanged()
+      // remove the projectId query parameter from current url
+      const { projectId, ...query } = this.$route.query
+      this.$router.replace({ query })
     }
   }
 }
@@ -392,6 +405,9 @@ export default {
 <style lang="less">
 .file-list-page {
   .file-row {
+    .icon-name-column {
+      padding: 5px 0;
+    }
     .icon-name-container {
       display: flex;
       padding: 0 5px;
@@ -399,7 +415,7 @@ export default {
 
       .file-icon-outter {
         height: 32px;
-        margin-right: 12px;
+        margin: auto 12px auto 0;
       }
 
       .file-name-container {

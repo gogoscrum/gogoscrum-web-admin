@@ -19,15 +19,17 @@ export default {
   },
   data() {
     return {
-      project: {},
       filter: {
         keyword: null,
+        projectId: null,
         page: 1,
         pageSize: this.$store.get('issueListPageSize') || 10
       }
     }
   },
-  created() {},
+  created() {
+    this.filter.projectId = this.$route.query.projectId || null
+  },
   methods: {
     pageSizeChanged(size) {
       // Update the local store for issue list page size.

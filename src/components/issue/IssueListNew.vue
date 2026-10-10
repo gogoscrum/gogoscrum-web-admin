@@ -1,7 +1,11 @@
 <template>
   <div class="issue-list-container">
     <div class="filter-row">
-      <div class="left-part"></div>
+      <div class="left-part">
+        <el-tag v-if="filter.projectId" closable type="primary" @close="resetProjectId">
+          {{ `Project ${filter.projectId}` }}
+        </el-tag>
+      </div>
       <div class="right-part">
         <div class="summary-info">
           <el-icon v-if="loading" class="is-loading refresh-btn">
@@ -437,6 +441,13 @@ export default {
 
       // Emit event to parent component
       this.$emit('pageSizeChanged', size)
+    },
+    resetProjectId() {
+      this.filter.projectId = null
+      this.filterChanged()
+      // remove the projectId query parameter from current url
+      const { projectId, ...query } = this.$route.query
+      this.$router.replace({ query })
     },
     editIssue(row) {
       this.editingIssue = row
