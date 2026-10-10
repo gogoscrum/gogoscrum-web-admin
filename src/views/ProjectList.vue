@@ -32,6 +32,7 @@
         @sort-change="sortChange"
         @filterChange="filterChange">
         <el-table-column
+          v-if="columns.includes('name')"
           :label="$t('projectList.list.name')"
           prop="name"
           sortable="custom"
@@ -64,12 +65,17 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="code" sortable="custom" :label="$t('projectList.list.code')" min-width="80">
+        <el-table-column
+          v-if="columns.includes('code')"
+          prop="code"
+          sortable="custom"
+          :label="$t('projectList.list.code')"
+          min-width="80">
           <template #default="scope">
             <span v-html="scope.row.codeHighlightLabel || scope.row.code"></span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('projectList.list.owner')" min-width="120">
+        <el-table-column v-if="columns.includes('owner')" :label="$t('projectList.list.owner')" min-width="120">
           <template #default="scope">
             <avatar
               v-if="scope.row.owner"
@@ -79,12 +85,18 @@
               showName></avatar>
           </template>
         </el-table-column>
-        <el-table-column prop="createdTime" sortable="custom" :label="$t('common.createdTime')" min-width="150">
+        <el-table-column
+          v-if="columns.includes('createdTime')"
+          prop="createdTime"
+          sortable="custom"
+          :label="$t('common.createdTime')"
+          min-width="150">
           <template #default="scope">
             {{ scope.row.createdTimeFormatted }}
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('lastIssueSeq')"
           prop="lastIssueSeq"
           sortable="custom"
           :label="$t('projectList.list.lastIssueSeq')"
@@ -97,6 +109,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('fileCount')"
           prop="fileCount"
           sortable="custom"
           :label="$t('projectList.list.fileCount')"
@@ -109,6 +122,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('totalFileSize')"
           prop="totalFileSize"
           sortable="custom"
           :label="$t('projectList.list.totalFileSize')"
@@ -118,7 +132,11 @@
             {{ scope.row.totalFileSizeFormatted }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.actions')" width="80" class-name="actions-column">
+        <el-table-column
+          v-if="columns.includes('actions')"
+          :label="$t('common.actions')"
+          width="80"
+          class-name="actions-column">
           <template #default="scope">
             <el-dropdown trigger="click" placement="bottom">
               <div class="more-action-icon" @click.stop>
@@ -126,10 +144,10 @@
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item icon="Right" @click.native="transferProject(scope.row)">{{
+                  <el-dropdown-item icon="Right" @click="transferProject(scope.row)">{{
                     $t('projectList.list.transfer')
                   }}</el-dropdown-item>
-                  <el-dropdown-item icon="Delete" @click.native="deleteProject(scope.$index, scope.row)">{{
+                  <el-dropdown-item icon="Delete" @click="deleteProject(scope.$index, scope.row)">{{
                     $t('common.delete')
                   }}</el-dropdown-item>
                 </el-dropdown-menu>
@@ -195,7 +213,8 @@ export default {
       totalPages: 0,
       loading: true,
       transferringProject: null,
-      otherFlags: [{ text: this.$t('projectList.list.archived'), value: 'ARCHIVED' }]
+      otherFlags: [{ text: this.$t('projectList.list.archived'), value: 'ARCHIVED' }],
+      columns: ['name', 'owner', 'createdTime', 'actions']
     }
   },
   created() {
