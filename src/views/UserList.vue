@@ -96,6 +96,9 @@
                     @click="toggleUserAdmin(scope.row)">
                     {{ getUserAdminActionLabel(scope.row) }}
                   </el-dropdown-item>
+                  <el-dropdown-item :icon="'Key'" @click="openResetPasswordDialog(scope.row)">
+                    {{ $t('userList.actions.resetPassword') }}
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -121,6 +124,11 @@
         </el-pagination>
       </div>
     </div>
+    <reset-user-password-dialog
+      v-if="resetPasswordUser"
+      :user="resetPasswordUser"
+      @resetPasswordDialogClosed="resetPasswordDialogClosed"
+      @passwordReset="passwordReset" />
   </div>
 </template>
 
@@ -129,12 +137,14 @@ import { userApi } from '@/api/user.js'
 import utils from '@/utils/util.js'
 import highlight from '@/utils/highlight.js'
 import Avatar from '@/components/common/Avatar.vue'
+import ResetUserPasswordDialog from '@/components/user/ResetUserPassword.vue'
 import { ElMessage } from 'element-plus'
 
 export default {
   name: 'UserList',
   components: {
-    Avatar
+    Avatar,
+    ResetUserPasswordDialog
   },
   data() {
     return {
@@ -149,7 +159,7 @@ export default {
       totalElements: 0,
       totalPages: 0,
       loading: true,
-      selectedUser: null,
+      resetPasswordUser: null,
       userFlags: [
         { text: this.$t('userList.list.disabled'), value: 'DISABLED' },
         { text: this.$t('userList.list.admin'), value: 'ADMIN' }
@@ -229,6 +239,15 @@ export default {
             : this.$t('userList.msg.revokeAdminSuccess', { nickname: updatedUser.nickname })
         })
       })
+    },
+    openResetPasswordDialog(user) {
+      this.resetPasswordUser = user
+    },
+    resetPasswordDialogClosed() {
+      this.resetPasswordUser = null
+    },
+    passwordReset() {
+      this.resetPasswordUser = null
     },
     keywordChanged() {
       if (this.keywordChangeTimeout) {

@@ -190,7 +190,21 @@
       "disableUser": "Disable user",
       "enableUser": "Enable user",
       "setAdmin": "Set as admin",
-      "revokeAdmin": "Revoke admin"
+      "revokeAdmin": "Revoke admin",
+      "resetPassword": "Reset password"
+    },
+    "resetPassword": {
+      "dialogTitle": "Reset password for {nickname}",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPasswordPlaceholder": "Enter new password again",
+      "msg": {
+        "missingNewPassword": "Please enter the new password",
+        "missingConfirmPassword": "Please enter the new password again",
+        "passwordNotMatch": "The two passwords do not match",
+        "resetSuccess": "Password for \"{nickname}\" has been reset"
+      }
     },
     "msg": {
       "disableSuccess": "User \"{nickname}\" disabled",

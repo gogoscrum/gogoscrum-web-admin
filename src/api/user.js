@@ -12,6 +12,7 @@ export const userApi = {
   disableUser: (userId) => del(`/api/users/${userId}/enabled`),
   enableAdmin: (userId) => post(`/api/users/${userId}/admin`),
   disableAdmin: (userId) => del(`/api/users/${userId}/admin`),
+  resetPassword: (userId, form) => put(`/api/users/${userId}/pwd`, form),
   updatePreference: (preference) => put(`/api/users/my/preference`, preference),
   updatePassword: (form) => put('/api/users/my/pwd', form),
   login: (form, params) => post('/api/login', form, params),

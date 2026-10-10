@@ -190,7 +190,21 @@
       "disableUser": "封禁用户",
       "enableUser": "解除封禁",
       "setAdmin": "设为管理员",
-      "revokeAdmin": "撤销管理员"
+      "revokeAdmin": "撤销管理员",
+      "resetPassword": "重置密码"
+    },
+    "resetPassword": {
+      "dialogTitle": "重置 {nickname} 的密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认密码",
+      "newPasswordPlaceholder": "请输入新密码",
+      "confirmPasswordPlaceholder": "请再次输入新密码",
+      "msg": {
+        "missingNewPassword": "请输入新密码",
+        "missingConfirmPassword": "请再次输入新密码",
+        "passwordNotMatch": "两次输入的密码不一致",
+        "resetSuccess": "已重置 \"{nickname}\" 的密码"
+      }
     },
     "msg": {
       "disableSuccess": "用户 \"{nickname}\" 已封禁",
