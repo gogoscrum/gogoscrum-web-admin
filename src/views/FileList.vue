@@ -2,6 +2,9 @@
   <div class="file-list-page page">
     <div class="filter-row">
       <div class="left-part">
+        <el-tag v-if="filter.creatorId" closable type="primary" @close="resetCreatorId">
+          {{ `${$t('common.createdBy')} ${filter.creatorId}` }}
+        </el-tag>
         <el-tag v-if="filter.projectId" closable type="primary" @close="resetProjectId">
           {{ `Project ${filter.projectId}` }}
         </el-tag>
@@ -96,11 +99,7 @@
           min-width="150"
           class-name="owner-column">
           <template #default="scope">
-            <avatar
-              :name="scope.row.createdBy.nickname"
-              :size="22"
-              :src="scope.row.createdBy.avatarUrl"
-              showName></avatar>
+            <UserMiniCard :user="scope.row.createdBy" />
           </template>
         </el-table-column>
         <el-table-column
@@ -190,19 +189,19 @@ import { fileApi } from '@/api/file.js'
 import highlight from '@/utils/highlight.js'
 import FileIcon from '@/components/common/FileIcon.vue'
 import { filesize } from 'filesize'
-import Avatar from '@/components/common/Avatar.vue'
 import OfficeViewer from '@/components/common/OfficeViewer.vue'
 import PdfViewer from '@/components/common/PdfViewer.vue'
 import util from '@/utils/util.js'
 import dict from '@/locales/zh-cn/dict.json'
+import UserMiniCard from '@/components/user/UserMiniCard.vue'
 
 export default {
   name: 'FileList',
   components: {
-    Avatar,
     FileIcon,
     OfficeViewer,
-    PdfViewer
+    PdfViewer,
+    UserMiniCard
   },
   data() {
     return {
@@ -212,6 +211,7 @@ export default {
       imgPreviewIndex: null,
       previewingImg: false,
       filter: {
+        creatorId: null,
         projectId: null,
         folder: false,
         fileTypes: [],
@@ -232,6 +232,7 @@ export default {
     }
   },
   created() {
+    this.filter.creatorId = this.$route.query.creatorId || null
     this.filter.projectId = this.$route.query.projectId || null
   },
   mounted() {
@@ -371,6 +372,13 @@ export default {
     },
     closeImgPreview() {
       this.previewingImg = false
+    },
+    resetCreatorId() {
+      this.filter.creatorId = null
+      this.keywordChanged()
+      // remove the creatorId query parameter from current url
+      const { creatorId, ...query } = this.$route.query
+      this.$router.replace({ query })
     },
     resetProjectId() {
       this.filter.projectId = null

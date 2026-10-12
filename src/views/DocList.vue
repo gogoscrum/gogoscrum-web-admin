@@ -1,7 +1,11 @@
 <template>
   <div class="doc-list-page page">
     <div class="filter-row">
-      <div class="left-part"></div>
+      <div class="left-part">
+        <el-tag v-if="filter.creatorId" closable type="primary" @close="resetCreatorId">
+          {{ `${$t('common.createdBy')} ${filter.creatorId}` }}
+        </el-tag>
+      </div>
       <div class="right-part">
         <div class="summary-info">
           <el-icon v-if="loading" class="is-loading refresh-btn">
@@ -60,11 +64,7 @@
           sort-by="createdBy.nickname, createdTime"
           min-width="150">
           <template #default="scope">
-            <avatar
-              :name="scope.row.createdBy.nickname"
-              :size="22"
-              :src="scope.row.createdBy.avatarUrl"
-              showName></avatar>
+            <UserMiniCard :user="scope.row.createdBy" />
           </template>
         </el-table-column>
         <el-table-column
@@ -99,21 +99,22 @@
 </template>
 
 <script>
-import Avatar from '@/components/common/Avatar.vue'
 import { docApi } from '@/api/doc.js'
 import highlight from '@/utils/highlight.js'
 import utils from '@/utils/util.js'
 import { filesize } from 'filesize'
+import UserMiniCard from '@/components/user/UserMiniCard.vue'
 
 export default {
   name: 'DocList',
   components: {
-    Avatar
+    UserMiniCard
   },
   data() {
     return {
       docs: [],
       filter: {
+        creatorId: null,
         keyword: null,
         publicAccess: null,
         page: 1,
@@ -125,7 +126,9 @@ export default {
       otherFlags: [{ text: this.$t('docList.list.public'), value: 'PUBLIC' }]
     }
   },
-  created() {},
+  created() {
+    this.filter.creatorId = this.$route.query.creatorId || null
+  },
   mounted() {
     this.loadDocs()
   },
@@ -191,6 +194,13 @@ export default {
     sortChange(event) {
       this.filter.orders = utils.getSortOrders(event)
       this.keywordChanged()
+    },
+    resetCreatorId() {
+      this.filter.creatorId = null
+      this.keywordChanged()
+      // remove the creatorId query parameter from current url
+      const { creatorId, ...query } = this.$route.query
+      this.$router.replace({ query })
     },
     docClicked(row) {
       this.$router.push({ name: 'DocView', params: { docId: row.id } })

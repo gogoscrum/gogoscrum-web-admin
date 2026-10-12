@@ -1,7 +1,14 @@
 <template>
   <div class="user-list-page page">
     <div class="filter-row">
-      <div class="left-part"></div>
+      <div class="left-part">
+        <el-button type="primary" text class="no-border mr-2" icon="CirclePlusFilled" @click="openCreateUserDialog">
+          {{ $t('userList.actions.createUser') }}
+        </el-button>
+        <el-tag v-if="filter.keyword" type="primary" closable @close="resetKeyword">
+          {{ `${$t('common.user')} ${filter.keyword}` }}
+        </el-tag>
+      </div>
       <div class="right-part">
         <div class="summary-info">
           <el-icon v-if="loading" class="is-loading refresh-btn">
@@ -46,13 +53,9 @@
           </template>
           <template #default="scope">
             <div class="flex items-center">
-              <avatar :name="scope.row.nickname" :size="24" :src="scope.row.avatarUrl"></avatar>
-              <span v-html="scope.row.nicknameHighlightLabel || scope.row.nickname" class="ml-2"></span>
+              <UserMiniCard :user="scope.row" />
               <el-tag v-if="scope.row.admin" type="success" effect="plain" size="small" class="ml-2">
                 {{ $t('userList.list.admin') }}
-              </el-tag>
-              <el-tag v-if="!scope.row.enabled" type="danger" effect="plain" size="small" class="ml-2">
-                {{ $t('userList.list.disabled') }}
               </el-tag>
             </div>
           </template>
@@ -124,11 +127,11 @@
         </el-pagination>
       </div>
     </div>
-    <reset-user-password-dialog
-      v-if="resetPasswordUser"
-      :user="resetPasswordUser"
-      @resetPasswordDialogClosed="resetPasswordDialogClosed"
-      @passwordReset="passwordReset" />
+    <user-edit-dialog
+      v-if="showUserEditDialog"
+      :user="userBeingEdited"
+      @userEditDialogClosed="userEditDialogClosed"
+      @userSaved="userSaved" />
   </div>
 </template>
 
@@ -136,15 +139,15 @@
 import { userApi } from '@/api/user.js'
 import utils from '@/utils/util.js'
 import highlight from '@/utils/highlight.js'
-import Avatar from '@/components/common/Avatar.vue'
-import ResetUserPasswordDialog from '@/components/user/ResetUserPassword.vue'
+import UserEditDialog from '@/components/user/UserEdit.vue'
 import { ElMessage } from 'element-plus'
+import UserMiniCard from '@/components/user/UserMiniCard.vue'
 
 export default {
   name: 'UserList',
   components: {
-    Avatar,
-    ResetUserPasswordDialog
+    UserEditDialog,
+    UserMiniCard
   },
   data() {
     return {
@@ -159,7 +162,8 @@ export default {
       totalElements: 0,
       totalPages: 0,
       loading: true,
-      resetPasswordUser: null,
+      showUserEditDialog: false,
+      userBeingEdited: null,
       userFlags: [
         { text: this.$t('userList.list.disabled'), value: 'DISABLED' },
         { text: this.$t('userList.list.admin'), value: 'ADMIN' }
@@ -167,6 +171,7 @@ export default {
     }
   },
   created() {
+    this.filter.keyword = this.$route.query.userId || null
     this.currentUser = this.$store.get('user')
     this.loadUsers()
   },
@@ -240,14 +245,26 @@ export default {
         })
       })
     },
+    openCreateUserDialog() {
+      this.userBeingEdited = null
+      this.showUserEditDialog = true
+    },
     openResetPasswordDialog(user) {
-      this.resetPasswordUser = user
+      this.userBeingEdited = user
+      this.showUserEditDialog = true
     },
-    resetPasswordDialogClosed() {
-      this.resetPasswordUser = null
+    userEditDialogClosed() {
+      this.closeUserEditDialog()
     },
-    passwordReset() {
-      this.resetPasswordUser = null
+    userSaved() {
+      if (!(this.userBeingEdited?.id || this.userBeingEdited?.userId)) {
+        this.resetFilter()
+      }
+      this.closeUserEditDialog()
+    },
+    closeUserEditDialog() {
+      this.showUserEditDialog = false
+      this.userBeingEdited = null
     },
     keywordChanged() {
       if (this.keywordChangeTimeout) {
@@ -298,6 +315,23 @@ export default {
       }
 
       this.filterChanged()
+    },
+    resetFilter() {
+      this.filter = {
+        page: 1,
+        pageSize: this.$store.get('userListPageSize') || 10,
+        orders: [],
+        enabled: null,
+        admin: null
+      }
+      this.filterChanged()
+    },
+    resetKeyword() {
+      this.filter.keyword = null
+      this.filterChanged()
+      // remove the userId query parameter from current url
+      const { userId, ...query } = this.$route.query
+      this.$router.replace({ query })
     }
   }
 }

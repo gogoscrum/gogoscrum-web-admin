@@ -2,8 +2,11 @@
   <div class="issue-list-container">
     <div class="filter-row">
       <div class="left-part">
-        <el-tag v-if="filter.projectId" closable type="primary" @close="resetProjectId">
-          {{ `Project ${filter.projectId}` }}
+        <el-tag v-if="filter.projectId" type="primary" closable @close="resetProjectId">
+          {{ `${$t('common.project')} ${filter.projectId}` }}
+        </el-tag>
+        <el-tag v-if="filter.creatorId" type="primary" closable @close="resetCreatorId">
+          {{ `${$t('common.createdBy')} ${filter.creatorId}` }}
         </el-tag>
       </div>
       <div class="right-part">
@@ -179,12 +182,7 @@
           sort-by="createdBy.nickname, project.code, code"
           min-width="120">
           <template #default="scope">
-            <avatar
-              v-if="scope.row.createdBy"
-              :name="scope.row.createdBy.nickname"
-              :size="22"
-              :src="scope.row.createdBy.avatarUrl"
-              showName></avatar>
+            <UserMiniCard :user="scope.row.createdBy" />
           </template>
         </el-table-column>
         <el-table-column
@@ -209,12 +207,7 @@
             <el-icon class="table-header-filter-icon" :class="{ active: filter.ownerIds?.length }"><Filter /></el-icon>
           </template>
           <template #default="scope">
-            <avatar
-              v-if="scope.row.owner"
-              :name="scope.row.owner.nickname"
-              :size="22"
-              :src="scope.row.owner.avatarUrl"
-              showName></avatar>
+            <UserMiniCard :user="scope.row.owner" />
           </template>
         </el-table-column>
         <template v-slot:empty>
@@ -257,6 +250,7 @@ import IssueTypeIcon from '@/components/common/IssueTypeIcon.vue'
 import StatusTag from '@/components/common/StatusTag.vue'
 import IssueTag from '@/components/common/IssueTag.vue'
 import StoryPoint from '@/components/common/StoryPoint.vue'
+import UserMiniCard from '@/components/user/UserMiniCard.vue'
 
 export default {
   name: 'IssueList',
@@ -267,7 +261,8 @@ export default {
     PriorityIcon,
     StatusTag,
     IssueTag,
-    StoryPoint
+    StoryPoint,
+    UserMiniCard
   },
   props: {
     columns: {
@@ -447,6 +442,13 @@ export default {
       this.filterChanged()
       // remove the projectId query parameter from current url
       const { projectId, ...query } = this.$route.query
+      this.$router.replace({ query })
+    },
+    resetCreatorId() {
+      this.filter.creatorId = null
+      this.filterChanged()
+      // remove the creatorId query parameter from current url
+      const { creatorId, ...query } = this.$route.query
       this.$router.replace({ query })
     },
     editIssue(row) {

@@ -5,6 +5,8 @@
     "title": "gogoscrum - 开源轻量级免费Scrum敏捷项目管理工具"
   },
   "common": {
+    "user": "用户",
+    "project": "项目",
     "close": "关闭",
     "refresh": "刷新",
     "delete": "删除",
@@ -16,7 +18,8 @@
     "createdTime": "创建时间",
     "msg": {
       "formValidationFail": "请填写必要的表单信息",
-      "updatedTip": "{nickname} 更新于 {time}"
+      "createdTip": "创建于 {time}",
+      "updatedTip": "更新于 {time}"
     },
     "filter": {
       "noMatch": "没有匹配的结果",
@@ -92,6 +95,10 @@
     "msg": {
       "issueCodeCopied": "任务编号已复制到剪贴板"
     }
+  },
+  "issueRow": {
+    "storyPoint": "{points} 个故事点",
+    "assignee": "执行者：{assignee}"
   },
   "transferProject": {
     "dialogTitle": "移交项目",
@@ -187,22 +194,28 @@
       "noUser": "系统中还没有任何用户"
     },
     "actions": {
+      "createUser": "新建用户",
       "disableUser": "封禁用户",
       "enableUser": "解除封禁",
       "setAdmin": "设为管理员",
       "revokeAdmin": "撤销管理员",
       "resetPassword": "重置密码"
     },
-    "resetPassword": {
-      "dialogTitle": "重置 {nickname} 的密码",
+    "userEdit": {
+      "createDialogTitle": "新建用户",
+      "resetDialogTitle": "重置 {nickname} 的密码",
+      "username": "用户名",
+      "usernamePlaceholder": "请输入用户名",
       "newPassword": "新密码",
       "confirmPassword": "确认密码",
       "newPasswordPlaceholder": "请输入新密码",
       "confirmPasswordPlaceholder": "请再次输入新密码",
       "msg": {
+        "missingUsername": "请输入用户名",
         "missingNewPassword": "请输入新密码",
         "missingConfirmPassword": "请再次输入新密码",
         "passwordNotMatch": "两次输入的密码不一致",
+        "createSuccess": "用户 \"{username}\" 创建成功",
         "resetSuccess": "已重置 \"{nickname}\" 的密码"
       }
     },
@@ -212,5 +225,13 @@
       "setAdminSuccess": "已将 \"{nickname}\" 设为管理员",
       "revokeAdminSuccess": "已撤销 \"{nickname}\" 的管理员权限"
     }
+  },
+  "userMiniCard": {
+    "details": "详情",
+    "projects": "项目",
+    "issues": "任务",
+    "files": "文件",
+    "docs": "文档",
+    "disabled": "已封禁"
   }
 }

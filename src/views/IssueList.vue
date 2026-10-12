@@ -22,6 +22,7 @@ export default {
       filter: {
         keyword: null,
         projectId: null,
+        creatorId: null,
         page: 1,
         pageSize: this.$store.get('issueListPageSize') || 10
       }
@@ -29,6 +30,7 @@ export default {
   },
   created() {
     this.filter.projectId = this.$route.query.projectId || null
+    this.filter.creatorId = this.$route.query.creatorId || null
   },
   methods: {
     pageSizeChanged(size) {

@@ -12,7 +12,7 @@
       </div>
     </el-tooltip>
     <div v-if="showName" class="vue-avatar-name">
-      {{ name }}
+      <span v-html="fancyName || name"></span>
     </div>
   </div>
 </template>
@@ -40,6 +40,9 @@ const getInitials = (name) => {
 const emits = defineEmits(['avatar-initials'])
 const props = defineProps({
   name: {
+    type: String
+  },
+  fancyName: {
     type: String
   },
   showName: {

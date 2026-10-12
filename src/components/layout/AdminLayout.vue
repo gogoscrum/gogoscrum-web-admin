@@ -6,7 +6,7 @@
           index="ProjectList"
           :route="{ name: 'ProjectList' }"
           :class="$route.name == 'ProjectList' ? 'menu-selected' : ''">
-          <el-icon><Grid /></el-icon>
+          <el-icon><Menu /></el-icon>
           <template #title
             ><span>{{ $t('adminLayout.menu.project') }}</span></template
           >

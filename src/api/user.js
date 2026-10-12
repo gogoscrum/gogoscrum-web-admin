@@ -1,6 +1,7 @@
 import { get, post, put, del } from './http'
 export const userApi = {
   register: (user) => post('/api/users/register', user),
+  create: (user) => post('/api/users/create', user),
   // search: (filter) => get('/api/users', { params: filter }),
   search: (filter) => post('/api/users/search', filter),
   findProjectMates: (filter) => get('/api/users/mates', { params: filter }),

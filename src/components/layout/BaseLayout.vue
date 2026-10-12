@@ -36,7 +36,7 @@
       </div>
     </el-header>
     <el-main class="layout-body">
-      <router-view />
+      <router-view :key="$route.fullPath" />
     </el-main>
     <el-footer v-if="!currentUser" class="footer">
       <div class="copy-right-row">

@@ -5,6 +5,8 @@
     "title": "gogoscrum - Lightweight Open-Source Scrum Tool"
   },
   "common": {
+    "user": "User",
+    "project": "Project",
     "close": "Close",
     "refresh": "Refresh",
     "delete": "Delete",
@@ -16,7 +18,8 @@
     "createdTime": "Created time",
     "msg": {
       "formValidationFail": "Please fill out all required fields",
-      "updatedTip": "{nickname} updated at {time}"
+      "createdTip": "created at {time}",
+      "updatedTip": "updated at {time}"
     },
     "filter": {
       "noMatch": "No matched results",
@@ -92,6 +95,10 @@
     "msg": {
       "issueCodeCopied": "Issue code copied to clipboard"
     }
+  },
+  "issueRow": {
+    "storyPoint": "{points} story points",
+    "assignee": "Assigned to {assignee}"
   },
   "transferProject": {
     "dialogTitle": "Transfer project",
@@ -187,22 +194,28 @@
       "noUser": "There is no user in the system"
     },
     "actions": {
+      "createUser": "New user",
       "disableUser": "Disable user",
       "enableUser": "Enable user",
       "setAdmin": "Set as admin",
       "revokeAdmin": "Revoke admin",
       "resetPassword": "Reset password"
     },
-    "resetPassword": {
-      "dialogTitle": "Reset password for {nickname}",
-      "newPassword": "New password",
-      "confirmPassword": "Confirm password",
+    "userEdit": {
+      "createDialogTitle": "New user",
+      "resetDialogTitle": "Reset password for {nickname}",
+      "username": "Username",
+      "usernamePlaceholder": "Enter username",
+      "newPassword": "Password",
+      "confirmPassword": "Confirm",
       "newPasswordPlaceholder": "Enter new password",
       "confirmPasswordPlaceholder": "Enter new password again",
       "msg": {
+        "missingUsername": "Please enter username",
         "missingNewPassword": "Please enter the new password",
         "missingConfirmPassword": "Please enter the new password again",
         "passwordNotMatch": "The two passwords do not match",
+        "createSuccess": "User \"{username}\" created",
         "resetSuccess": "Password for \"{nickname}\" has been reset"
       }
     },
@@ -212,5 +225,13 @@
       "setAdminSuccess": "User \"{nickname}\" set as admin",
       "revokeAdminSuccess": "User \"{nickname}\" admin revoked"
     }
+  },
+  "userMiniCard": {
+    "details": "Details",
+    "projects": "Projects",
+    "issues": "Issues",
+    "files": "Files",
+    "docs": "Documents",
+    "disabled": "Disabled"
   }
 }

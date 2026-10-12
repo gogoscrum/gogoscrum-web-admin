@@ -9,17 +9,23 @@
       </div>
     </div>
     <div class="body" v-html="doc.content"></div>
-    <div class="desc">{{ lastSavedTip }}</div>
+    <div v-if="doc.updatedBy" class="desc flex items-center">
+      <Avatar :name="doc.updatedBy.nickname" :size="20" :src="doc.updatedBy.avatarUrl" showName></Avatar>
+      <span class="ml-2">{{ lastSavedTip }}</span>
+    </div>
   </div>
 </template>
 
 <script>
 import { docApi } from '@/api/doc.js'
 import utils from '@/utils/util'
+import Avatar from '@/components/common/Avatar.vue'
 
 export default {
   name: 'DocView',
-  components: {},
+  components: {
+    Avatar
+  },
   data() {
     return {
       docId: null,
@@ -33,13 +39,11 @@ export default {
     lastSavedTip() {
       if (!this.doc.createdBy) return ''
 
-      return this.doc.createdTime === this.doc.updateTime
+      return this.doc.createdTime === this.doc.updatedTime
         ? this.$t('common.msg.createdTip', {
-            nickname: this.doc.createdBy.nickname,
             time: this.doc.createdTimeFormatted
           })
         : this.$t('common.msg.updatedTip', {
-            nickname: this.doc.updatedBy.nickname,
             time: this.doc.updatedTimeFormatted
           })
     }

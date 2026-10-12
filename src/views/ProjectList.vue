@@ -1,7 +1,14 @@
 <template>
   <div class="project-list-page page">
     <div class="filter-row">
-      <div class="left-part"></div>
+      <div class="left-part">
+        <el-tag v-if="filter.creatorId" type="primary" closable @close="resetCreatorId">
+          {{ `${$t('common.createdBy')} ${filter.creatorId}` }}
+        </el-tag>
+        <el-tag v-if="filter.keyword" type="primary" closable @close="resetKeyword">
+          {{ `Project ${filter.keyword}` }}
+        </el-tag>
+      </div>
       <div class="right-part">
         <div class="summary-info">
           <el-icon v-if="loading" class="is-loading refresh-btn">
@@ -36,10 +43,11 @@
           :label="$t('projectList.list.name')"
           prop="name"
           sortable="custom"
+          sort-by="name, createdTime"
           column-key="otherFlags"
           :filters="otherFlags"
           :filter-multiple="true"
-          min-width="280">
+          min-width="360">
           <template #filter-icon>
             <el-icon class="table-header-filter-icon" :class="{ active: filter.archived }"><Filter /></el-icon>
           </template>
@@ -69,38 +77,46 @@
           v-if="columns.includes('code')"
           prop="code"
           sortable="custom"
+          sort-by="code, createdTime"
           :label="$t('projectList.list.code')"
-          min-width="80">
+          min-width="100">
           <template #default="scope">
             <span v-html="scope.row.codeHighlightLabel || scope.row.code"></span>
           </template>
         </el-table-column>
-        <el-table-column v-if="columns.includes('owner')" :label="$t('projectList.list.owner')" min-width="120">
+        <el-table-column
+          v-if="columns.includes('creator')"
+          :label="$t('common.createdBy')"
+          sortable="custom"
+          sort-by="createdBy.nickname, createdTime"
+          min-width="130">
           <template #default="scope">
-            <avatar
-              v-if="scope.row.owner"
-              :name="scope.row.owner.nickname"
-              :size="24"
-              :src="scope.row.owner.avatarUrl"
-              showName></avatar>
+            <UserMiniCard :user="scope.row.createdBy" />
           </template>
         </el-table-column>
         <el-table-column
           v-if="columns.includes('createdTime')"
           prop="createdTime"
           sortable="custom"
+          sort-by="createdTime"
           :label="$t('common.createdTime')"
-          min-width="150">
+          min-width="180">
           <template #default="scope">
             {{ scope.row.createdTimeFormatted }}
+          </template>
+        </el-table-column>
+        <el-table-column v-if="columns.includes('owner')" :label="$t('projectList.list.owner')" min-width="130">
+          <template #default="scope">
+            <UserMiniCard :user="scope.row.owner" />
           </template>
         </el-table-column>
         <el-table-column
           v-if="columns.includes('lastIssueSeq')"
           prop="lastIssueSeq"
           sortable="custom"
+          sort-by="lastIssueSeq, createdTime"
           :label="$t('projectList.list.lastIssueSeq')"
-          min-width="80"
+          min-width="90"
           align="right">
           <template #default="scope">
             <router-link :to="{ name: 'IssueList', query: { projectId: scope.row.id } }">
@@ -112,8 +128,9 @@
           v-if="columns.includes('fileCount')"
           prop="fileCount"
           sortable="custom"
+          sort-by="fileCount, createdTime"
           :label="$t('projectList.list.fileCount')"
-          min-width="80"
+          min-width="90"
           align="right">
           <template #default="scope">
             <router-link :to="{ name: 'FileList', query: { projectId: scope.row.id } }">
@@ -125,8 +142,9 @@
           v-if="columns.includes('totalFileSize')"
           prop="totalFileSize"
           sortable="custom"
+          sort-by="totalFileSize, createdTime"
           :label="$t('projectList.list.totalFileSize')"
-          min-width="90"
+          min-width="100"
           align="right">
           <template #default="scope">
             {{ scope.row.totalFileSizeFormatted }}
@@ -191,18 +209,21 @@ import TransferProjectDialog from '@/components/project/TransferProject.vue'
 import Avatar from '@/components/common/Avatar.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { filesize } from 'filesize'
+import UserMiniCard from '@/components/user/UserMiniCard.vue'
 
 export default {
   name: 'ProjectList',
   components: {
     TransferProjectDialog,
-    Avatar
+    Avatar,
+    UserMiniCard
   },
   data() {
     return {
       currentUser: {},
       projects: [],
       filter: {
+        creatorId: null,
         keyword: null,
         global: true,
         orders: [],
@@ -214,10 +235,21 @@ export default {
       loading: true,
       transferringProject: null,
       otherFlags: [{ text: this.$t('projectList.list.archived'), value: 'ARCHIVED' }],
-      columns: ['name', 'owner', 'createdTime', 'actions']
+      columns: [
+        'name',
+        'code',
+        'creator',
+        'createdTime',
+        'owner',
+        'lastIssueSeq',
+        'fileCount',
+        'totalFileSize',
+        'actions'
+      ]
     }
   },
   created() {
+    this.filter.creatorId = this.$route.query.creatorId || null
     this.currentUser = this.$store.get('user')
     this.loadProjects()
   },
@@ -267,13 +299,7 @@ export default {
       }, 300)
     },
     sortChange(event) {
-      this.filter.orders = []
-      if (event.prop && event.order) {
-        this.filter.orders.push({
-          property: event.prop,
-          direction: event.order === 'ascending' ? 'ASC' : 'DESC'
-        })
-      }
+      this.filter.orders = utils.getSortOrders(event)
       this.filterChanged()
     },
     filterChanged() {
@@ -349,6 +375,17 @@ export default {
         .catch((err) => {
           // Cancelled, do nothing
         })
+    },
+    resetKeyword() {
+      this.filter.keyword = null
+      this.filterChanged()
+    },
+    resetCreatorId() {
+      this.filter.creatorId = null
+      this.filterChanged()
+      // remove the creatorId query parameter from current url
+      const { creatorId, ...query } = this.$route.query
+      this.$router.replace({ query })
     }
   }
 }
@@ -356,10 +393,6 @@ export default {
 
 <style lang="less" scoped>
 .project-list-page {
-  // width: 90%;
-  // max-width: 960px;
-  // margin: 30px auto;
-
   .project-list {
     .project-row {
       .project-name {
