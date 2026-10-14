@@ -17,6 +17,22 @@
           <el-icon v-else @click="loadProjects" class="refresh-btn">
             <Refresh />
           </el-icon>
+          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
+            <el-icon class="column-setting-btn"><Setting /></el-icon>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div class="column-setting-menu-content">
+                  <el-checkbox-group v-model="columns" @change="columnsChanged">
+                    <div v-for="item in availableColumns" :key="item.key">
+                      <el-checkbox :value="item.key" :disabled="item.readonly">
+                        {{ $t(item.labelKey) }}
+                      </el-checkbox>
+                    </div>
+                  </el-checkbox-group>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -43,7 +59,6 @@
         @sort-change="sortChange"
         @filterChange="filterChange">
         <el-table-column
-          v-if="columns.includes('name')"
           :label="$t('projectList.list.name')"
           prop="name"
           sortable="custom"
@@ -223,6 +238,19 @@ export default {
     UserMiniCard
   },
   data() {
+    const availableColumns = [
+      { key: 'name', labelKey: 'projectList.list.name', readonly: true },
+      { key: 'code', labelKey: 'projectList.list.code' },
+      { key: 'creator', labelKey: 'common.createdBy' },
+      { key: 'createdTime', labelKey: 'common.createdTime' },
+      { key: 'owner', labelKey: 'projectList.list.owner' },
+      { key: 'lastIssueSeq', labelKey: 'projectList.list.lastIssueSeq' },
+      { key: 'fileCount', labelKey: 'projectList.list.fileCount' },
+      { key: 'totalFileSize', labelKey: 'projectList.list.totalFileSize' },
+      { key: 'actions', labelKey: 'common.actions', readonly: true }
+    ]
+    const defaultColumns = ['name', 'code', 'creator', 'createdTime', 'actions']
+
     return {
       currentUser: {},
       projects: [],
@@ -232,24 +260,15 @@ export default {
         global: true,
         orders: [],
         page: 1,
-        pageSize: this.$store.get('projectListPageSize') || 10
+        pageSize: this.$store.get('adminProjectListPageSize') || 10
       },
       totalElements: 0,
       totalPages: 0,
       loading: true,
       transferringProject: null,
       otherFlags: [{ text: this.$t('projectList.list.archived'), value: 'ARCHIVED' }],
-      columns: [
-        'name',
-        'code',
-        'creator',
-        'createdTime',
-        'owner',
-        'lastIssueSeq',
-        'fileCount',
-        'totalFileSize',
-        'actions'
-      ]
+      columns: this.$store.get('adminProjectListColumns') || defaultColumns,
+      availableColumns: availableColumns
     }
   },
   watch: {
@@ -322,12 +341,13 @@ export default {
     },
     pageSizeChanged(size) {
       this.filter.pageSize = size
-      this.$store.set('projectListPageSize', this.filter.pageSize)
+      this.$store.set('adminProjectListPageSize', this.filter.pageSize)
       this.reloadList()
     },
+    columnsChanged() {
+      this.$store.set('adminProjectListColumns', this.columns)
+    },
     filterChange(filters) {
-      console.log('filterChange', filters)
-
       if (filters.otherFlags) {
         if (filters.otherFlags.includes('ARCHIVED')) {
           this.filter.archived = true

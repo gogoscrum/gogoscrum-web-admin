@@ -3,8 +3,10 @@
     <IssueListNew
       v-if="filter"
       :issue-filter="filter"
+      :columns="columns"
       :show-export-btn="false"
       :show-new-btn="false"
+      @columns-changed="columnsChanged"
       @page-size-changed="pageSizeChanged">
     </IssueListNew>
   </div>
@@ -18,6 +20,18 @@ export default {
     IssueListNew
   },
   data() {
+    const defaultColumns = [
+      'code',
+      'name',
+      'projectName',
+      'priority',
+      'storyPoints',
+      'status',
+      'creator',
+      'createdTime',
+      'owner'
+    ]
+
     return {
       filter: {
         keyword: null,
@@ -25,7 +39,8 @@ export default {
         creatorId: null,
         page: 1,
         pageSize: this.$store.get('issueListPageSize') || 10
-      }
+      },
+      columns: this.$store.get('adminIssueListColumns') || defaultColumns
     }
   },
   watch: {
@@ -43,6 +58,10 @@ export default {
       // Update the local store for issue list page size.
       // Don't need to handle the pagination as the IssueList component will handle it.
       this.$store.set('issueListPageSize', size)
+    },
+    columnsChanged(columns) {
+      this.columns = columns
+      this.$store.set('adminIssueListColumns', this.columns)
     }
   }
 }

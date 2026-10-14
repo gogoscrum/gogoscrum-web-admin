@@ -20,6 +20,22 @@
           <el-icon v-else @click="loadIssues" class="refresh-btn">
             <Refresh />
           </el-icon>
+          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
+            <el-icon class="column-setting-btn"><Setting /></el-icon>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div class="column-setting-menu-content">
+                  <el-checkbox-group v-model="selectedColumns" @change="columnsChanged">
+                    <div v-for="item in availableColumns" :key="item.key">
+                      <el-checkbox :value="item.key" :disabled="item.readonly">
+                        {{ $t(item.labelKey) }}
+                      </el-checkbox>
+                    </div>
+                  </el-checkbox-group>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -49,7 +65,6 @@
         @filter-change="filterChange"
         @row-click="editIssue">
         <el-table-column
-          v-if="columns.includes('code')"
           :label="$t('issueList.list.code')"
           prop="code"
           sortable="custom"
@@ -71,7 +86,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('name')"
           :label="$t('issueList.list.name')"
           prop="name"
           :show-overflow-tooltip="false"
@@ -104,7 +118,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('projectName')"
+          v-if="selectedColumns.includes('projectName')"
           :label="$t('issueList.list.projectName')"
           prop="projectName"
           sortable="custom"
@@ -113,7 +127,7 @@
           min-width="130">
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('sprint')"
+          v-if="selectedColumns.includes('sprint')"
           :label="$t('issueList.list.sprint')"
           sortable="custom"
           sort-by="sprint.id, project.code, code"
@@ -124,7 +138,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('component')"
+          v-if="selectedColumns.includes('component')"
           :label="$t('issueList.list.component')"
           prop="componentName"
           sortable="custom"
@@ -138,7 +152,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('priority')"
+          v-if="selectedColumns.includes('priority')"
           :label="$t('issueList.list.priority')"
           prop="priority"
           sortable="custom"
@@ -157,7 +171,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('storyPoints')"
+          v-if="selectedColumns.includes('storyPoints')"
           :label="$t('issueList.list.storyPoints')"
           prop="storyPoints"
           sortable="custom"
@@ -168,7 +182,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('status')"
+          v-if="selectedColumns.includes('status')"
           :label="$t('issueList.list.status')"
           prop="issueGroup.name"
           sortable="custom"
@@ -182,7 +196,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('creator')"
+          v-if="selectedColumns.includes('creator')"
           :label="$t('common.createdBy')"
           prop="createdBy.nickname"
           sortable="custom"
@@ -193,7 +207,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('createdTime')"
+          v-if="selectedColumns.includes('createdTime')"
           prop="createdTime"
           sortable="custom"
           sort-by="createdTime, project.code, code"
@@ -204,7 +218,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columns.includes('owner')"
+          v-if="selectedColumns.includes('owner')"
           :label="$t('issueList.list.assignee')"
           prop="owner.nickname"
           sortable="custom"
@@ -307,8 +321,22 @@ export default {
       default: false
     }
   },
-  emits: ['pageSizeChanged', 'issueFilterChanged'],
+  emits: ['pageSizeChanged', 'issueFilterChanged', 'columnsChanged'],
   data() {
+    const availableColumns = [
+      { key: 'code', labelKey: 'issueList.list.code', readonly: true },
+      { key: 'name', labelKey: 'issueList.list.name', readonly: true },
+      { key: 'projectName', labelKey: 'issueList.list.projectName' },
+      { key: 'sprint', labelKey: 'issueList.list.sprint' },
+      { key: 'component', labelKey: 'issueList.list.component' },
+      { key: 'priority', labelKey: 'issueList.list.priority' },
+      { key: 'storyPoints', labelKey: 'issueList.list.storyPoints' },
+      { key: 'status', labelKey: 'issueList.list.status' },
+      { key: 'creator', labelKey: 'common.createdBy' },
+      { key: 'createdTime', labelKey: 'common.createdTime' },
+      { key: 'owner', labelKey: 'issueList.list.assignee' }
+    ]
+
     return {
       currentUser: this.$store.get('user'),
       issues: [],
@@ -320,7 +348,9 @@ export default {
       loading: true,
       editingIssue: null,
       issueTypeFilters: [],
-      priorityFilters: []
+      priorityFilters: [],
+      availableColumns,
+      selectedColumns: this.columns
     }
   },
   computed: {},
@@ -332,6 +362,12 @@ export default {
           this.filter.pageSize = 10
         }
         this.loadIssues()
+      },
+      deep: true
+    },
+    columns: {
+      handler: function (newValue) {
+        this.selectedColumns = newValue
       },
       deep: true
     }
@@ -443,6 +479,9 @@ export default {
 
       // Emit event to parent component
       this.$emit('pageSizeChanged', size)
+    },
+    columnsChanged() {
+      this.$emit('columnsChanged', this.selectedColumns)
     },
     resetProjectId() {
       this.filter.projectId = null

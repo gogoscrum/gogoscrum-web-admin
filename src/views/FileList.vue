@@ -20,6 +20,22 @@
           <el-icon v-else @click="loadFiles" class="refresh-btn">
             <Refresh />
           </el-icon>
+          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
+            <el-icon class="column-setting-btn"><Setting /></el-icon>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div class="column-setting-menu-content">
+                  <el-checkbox-group v-model="columns" @change="columnsChanged">
+                    <div v-for="item in availableColumns" :key="item.key">
+                      <el-checkbox :value="item.key" :disabled="item.readonly">
+                        {{ $t(item.labelKey) }}
+                      </el-checkbox>
+                    </div>
+                  </el-checkbox-group>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -68,6 +84,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('fileType')"
           :label="$t('fileList.list.fileType')"
           prop="fileTypeLabel"
           sortable="custom"
@@ -81,6 +98,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('targetType')"
           :label="$t('fileList.list.targetType')"
           prop="targetTypeLabel"
           sortable="custom"
@@ -96,6 +114,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('creator')"
           :label="$t('common.createdBy')"
           sortable="custom"
           sort-by="createdBy.nickname, createdTime"
@@ -106,6 +125,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('createdTime')"
           prop="createdTimeFormatted"
           :label="$t('common.createdTime')"
           sortable="custom"
@@ -113,6 +133,7 @@
           min-width="180">
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('storage')"
           prop="storageProviderLabel"
           :label="$t('fileList.list.storage')"
           sortable="custom"
@@ -120,6 +141,7 @@
           min-width="100">
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('size')"
           prop="sizeFormatted"
           :label="$t('fileList.list.size')"
           sortable="custom"
@@ -127,7 +149,7 @@
           min-width="90"
           align="right">
         </el-table-column>
-        <el-table-column :label="$t('common.actions')" width="80" align="center">
+        <el-table-column v-if="columns.includes('actions')" :label="$t('common.actions')" width="80" align="center">
           <template #default="scope">
             <el-dropdown trigger="click" placement="bottom">
               <div class="more-action-icon" @click.stop>
@@ -207,6 +229,18 @@ export default {
     UserMiniCard
   },
   data() {
+    const availableColumns = [
+      { key: 'name', labelKey: 'fileList.list.name', readonly: true },
+      { key: 'fileType', labelKey: 'fileList.list.fileType' },
+      { key: 'targetType', labelKey: 'fileList.list.targetType' },
+      { key: 'creator', labelKey: 'common.createdBy' },
+      { key: 'createdTime', labelKey: 'common.createdTime' },
+      { key: 'storage', labelKey: 'fileList.list.storage' },
+      { key: 'size', labelKey: 'fileList.list.size' },
+      { key: 'actions', labelKey: 'common.actions', readonly: true }
+    ]
+    const defaultColumns = ['name', 'fileType', 'targetType', 'creator', 'createdTime', 'size', 'actions']
+
     return {
       dict: dict,
       files: [],
@@ -230,6 +264,8 @@ export default {
       videoDialogVisible: false,
       officeFile: null,
       pdfFile: null,
+      columns: this.$store.get('adminFileListColumns') || defaultColumns,
+      availableColumns: availableColumns,
       fileIdUrlMap: {},
       fileTypeFilters: [],
       targetTypeFilters: []
@@ -320,6 +356,9 @@ export default {
       this.filter.pageSize = size
       this.$store.set('fileListPageSize', this.filter.pageSize)
       this.reloadList()
+    },
+    columnsChanged() {
+      this.$store.set('adminFileListColumns', this.columns)
     },
     sortChange(event) {
       this.filter.orders = util.getSortOrders(event)

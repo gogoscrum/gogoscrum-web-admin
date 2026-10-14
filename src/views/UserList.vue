@@ -17,6 +17,22 @@
           <el-icon v-else @click="loadUsers" class="refresh-btn">
             <Refresh />
           </el-icon>
+          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
+            <el-icon class="column-setting-btn"><Setting /></el-icon>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div class="column-setting-menu-content">
+                  <el-checkbox-group v-model="columns" @change="columnsChanged">
+                    <div v-for="item in availableColumns" :key="item.key">
+                      <el-checkbox :value="item.key" :disabled="item.readonly">
+                        {{ $t(item.labelKey) }}
+                      </el-checkbox>
+                    </div>
+                  </el-checkbox-group>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -64,17 +80,28 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="username" sortable="custom" :label="$t('userList.list.username')" min-width="80">
+        <el-table-column
+          v-if="columns.includes('username')"
+          prop="username"
+          sortable="custom"
+          :label="$t('userList.list.username')"
+          min-width="80">
           <template #default="scope">
             <span v-html="scope.row.usernameHighlightLabel || scope.row.username"></span>
           </template>
         </el-table-column>
-        <el-table-column prop="createdTime" sortable="custom" :label="$t('common.createdTime')" min-width="80">
+        <el-table-column
+          v-if="columns.includes('createdTime')"
+          prop="createdTime"
+          sortable="custom"
+          :label="$t('common.createdTime')"
+          min-width="80">
           <template #default="scope">
             {{ scope.row.createdTimeFormatted }}
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('lastLoginTime')"
           prop="lastLoginTime"
           sortable="custom"
           :label="$t('userList.list.lastLoginTime')"
@@ -83,7 +110,12 @@
             {{ scope.row.lastLoginTimeFormatted }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.actions')" width="80" class-name="actions-column" align="center">
+        <el-table-column
+          v-if="columns.includes('actions')"
+          :label="$t('common.actions')"
+          width="80"
+          class-name="actions-column"
+          align="center">
           <template #default="scope">
             <el-dropdown trigger="click" placement="bottom">
               <div class="more-action-icon" @click.stop>
@@ -154,6 +186,15 @@ export default {
     UserMiniCard
   },
   data() {
+    const availableColumns = [
+      { key: 'nickname', labelKey: 'userList.list.nickname', readonly: true },
+      { key: 'username', labelKey: 'userList.list.username' },
+      { key: 'createdTime', labelKey: 'common.createdTime' },
+      { key: 'lastLoginTime', labelKey: 'userList.list.lastLoginTime' },
+      { key: 'actions', labelKey: 'common.actions', readonly: true }
+    ]
+    const defaultColumns = ['nickname', 'username', 'createdTime', 'lastLoginTime', 'actions']
+
     return {
       currentUser: {},
       users: [],
@@ -168,6 +209,8 @@ export default {
       loading: true,
       showUserEditDialog: false,
       userBeingEdited: null,
+      columns: this.$store.get('adminUserListColumns') || defaultColumns,
+      availableColumns: availableColumns,
       userFlags: [
         { text: this.$t('userList.list.disabled'), value: 'DISABLED' },
         { text: this.$t('userList.list.admin'), value: 'ADMIN' }
@@ -307,9 +350,10 @@ export default {
       this.$store.set('userListPageSize', this.filter.pageSize)
       this.reloadList()
     },
+    columnsChanged() {
+      this.$store.set('adminUserListColumns', this.columns)
+    },
     filterChange(filters) {
-      console.log('filterChange', filters)
-
       if (filters.userFlag) {
         if (filters.userFlag.includes('DISABLED')) {
           this.filter.enabled = false

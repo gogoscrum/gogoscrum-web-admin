@@ -17,6 +17,22 @@
           <el-icon v-else @click="loadDocs" class="refresh-btn">
             <Refresh />
           </el-icon>
+          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
+            <el-icon class="column-setting-btn"><Setting /></el-icon>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <div class="column-setting-menu-content">
+                  <el-checkbox-group v-model="columns" @change="columnsChanged">
+                    <div v-for="item in availableColumns" :key="item.key">
+                      <el-checkbox :value="item.key" :disabled="item.readonly">
+                        {{ $t(item.labelKey) }}
+                      </el-checkbox>
+                    </div>
+                  </el-checkbox-group>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -62,6 +78,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('creator')"
           :label="$t('common.createdBy')"
           sortable="custom"
           sort-by="createdBy.nickname, createdTime"
@@ -71,13 +88,19 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columns.includes('createdTime')"
           prop="createdTimeFormatted"
           :label="$t('common.createdTime')"
           sortable="custom"
           sort-by="createdTime"
           min-width="150">
         </el-table-column>
-        <el-table-column prop="contentLengthFormatted" :label="$t('docList.list.length')" min-width="80" align="right">
+        <el-table-column
+          v-if="columns.includes('length')"
+          prop="contentLengthFormatted"
+          :label="$t('docList.list.length')"
+          min-width="80"
+          align="right">
         </el-table-column>
         <template v-slot:empty>
           <el-empty :image-size="100" :description="$t('docList.list.empty')"> </el-empty>
@@ -114,6 +137,14 @@ export default {
     UserMiniCard
   },
   data() {
+    const availableColumns = [
+      { key: 'name', labelKey: 'docList.list.name', readonly: true },
+      { key: 'creator', labelKey: 'common.createdBy' },
+      { key: 'createdTime', labelKey: 'common.createdTime' },
+      { key: 'length', labelKey: 'docList.list.length' }
+    ]
+    const defaultColumns = ['name', 'creator', 'createdTime', 'length']
+
     return {
       docs: [],
       filter: {
@@ -126,7 +157,9 @@ export default {
       totalElements: 0,
       totalPages: 0,
       loading: false,
-      otherFlags: [{ text: this.$t('docList.list.public'), value: 'PUBLIC' }]
+      otherFlags: [{ text: this.$t('docList.list.public'), value: 'PUBLIC' }],
+      columns: this.$store.get('adminDocListColumns') || defaultColumns,
+      availableColumns: availableColumns
     }
   },
   watch: {
@@ -187,9 +220,10 @@ export default {
       this.$store.set('docListPageSize', this.filter.pageSize)
       this.loadDocs()
     },
+    columnsChanged() {
+      this.$store.set('adminDocListColumns', this.columns)
+    },
     filterChange(filters) {
-      console.log('filterChange', filters)
-
       if (filters.otherFlags) {
         if (filters.otherFlags.includes('PUBLIC')) {
           this.filter.publicAccess = true
