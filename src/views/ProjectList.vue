@@ -6,7 +6,7 @@
           {{ `${$t('common.createdBy')} ${filter.creatorId}` }}
         </el-tag>
         <el-tag v-if="filter.keyword" type="primary" closable @close="resetKeyword">
-          {{ `Project ${filter.keyword}` }}
+          {{ `${$t('common.search')} \"${filter.keyword}\"` }}
         </el-tag>
       </div>
       <div class="right-part">
@@ -17,7 +17,11 @@
           <el-icon v-else @click="loadProjects" class="refresh-btn">
             <Refresh />
           </el-icon>
-          <span class="item-count">{{ $t('projectList.header.projectCount', { count: totalElements }) }}</span>
+          <span class="item-count">{{
+            filter.keyword
+              ? $t('common.filter.matchedResults', { count: totalElements })
+              : $t('projectList.header.projectCount', { count: totalElements })
+          }}</span>
         </div>
         <el-form-item class="mb-0!">
           <el-input
@@ -248,6 +252,12 @@ export default {
       ]
     }
   },
+  watch: {
+    $route(to, from) {
+      this.filter.creatorId = to.query.creatorId || null
+      this.reloadList()
+    }
+  },
   created() {
     this.filter.creatorId = this.$route.query.creatorId || null
     this.currentUser = this.$store.get('user')
@@ -295,14 +305,14 @@ export default {
         clearTimeout(this.keywordChangeTimeout)
       }
       this.keywordChangeTimeout = setTimeout(() => {
-        this.filterChanged()
-      }, 300)
+        this.reloadList()
+      }, 500)
     },
     sortChange(event) {
       this.filter.orders = utils.getSortOrders(event)
-      this.filterChanged()
+      this.reloadList()
     },
-    filterChanged() {
+    reloadList() {
       this.filter.page = 1
       this.loadProjects()
     },
@@ -313,7 +323,7 @@ export default {
     pageSizeChanged(size) {
       this.filter.pageSize = size
       this.$store.set('projectListPageSize', this.filter.pageSize)
-      this.filterChanged()
+      this.reloadList()
     },
     filterChange(filters) {
       console.log('filterChange', filters)
@@ -326,7 +336,7 @@ export default {
         }
       }
 
-      this.filterChanged()
+      this.reloadList()
     },
     transferProject(row) {
       this.transferringProject = row
@@ -378,11 +388,15 @@ export default {
     },
     resetKeyword() {
       this.filter.keyword = null
-      this.filterChanged()
+      this.reloadList()
+    },
+    resetKeyword() {
+      this.filter.keyword = null
+      this.reloadList()
     },
     resetCreatorId() {
       this.filter.creatorId = null
-      this.filterChanged()
+      this.reloadList()
       // remove the creatorId query parameter from current url
       const { creatorId, ...query } = this.$route.query
       this.$router.replace({ query })

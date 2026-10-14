@@ -2,11 +2,11 @@
   <div class="user-list-page page">
     <div class="filter-row">
       <div class="left-part">
-        <el-button type="primary" text class="no-border mr-2" icon="CirclePlusFilled" @click="openCreateUserDialog">
+        <el-button type="primary" text class="no-border mr-1" icon="CirclePlusFilled" @click="openCreateUserDialog">
           {{ $t('userList.actions.createUser') }}
         </el-button>
         <el-tag v-if="filter.keyword" type="primary" closable @close="resetKeyword">
-          {{ `${$t('common.user')} ${filter.keyword}` }}
+          {{ `${$t('common.search')} \"${filter.keyword}\"` }}
         </el-tag>
       </div>
       <div class="right-part">
@@ -17,7 +17,11 @@
           <el-icon v-else @click="loadUsers" class="refresh-btn">
             <Refresh />
           </el-icon>
-          <span class="item-count">{{ $t('userList.header.userCount', { count: totalElements }) }}</span>
+          <span class="item-count">{{
+            filter.keyword
+              ? $t('common.filter.matchedResults', { count: totalElements })
+              : $t('userList.header.userCount', { count: totalElements })
+          }}</span>
         </div>
         <el-form-item class="mb-0!">
           <el-input
@@ -170,6 +174,12 @@ export default {
       ]
     }
   },
+  watch: {
+    $route(to, from) {
+      this.filter.keyword = to.query.userId || null
+      this.reloadList()
+    }
+  },
   created() {
     this.filter.keyword = this.$route.query.userId || null
     this.currentUser = this.$store.get('user')
@@ -271,8 +281,8 @@ export default {
         clearTimeout(this.keywordChangeTimeout)
       }
       this.keywordChangeTimeout = setTimeout(() => {
-        this.filterChanged()
-      }, 300)
+        this.reloadList()
+      }, 500)
     },
     sortChange(event) {
       this.filter.orders = []
@@ -282,9 +292,9 @@ export default {
           direction: event.order === 'ascending' ? 'ASC' : 'DESC'
         })
       }
-      this.filterChanged()
+      this.reloadList()
     },
-    filterChanged() {
+    reloadList() {
       this.filter.page = 1
       this.loadUsers()
     },
@@ -295,7 +305,7 @@ export default {
     pageSizeChanged(size) {
       this.filter.pageSize = size
       this.$store.set('userListPageSize', this.filter.pageSize)
-      this.filterChanged()
+      this.reloadList()
     },
     filterChange(filters) {
       console.log('filterChange', filters)
@@ -314,7 +324,7 @@ export default {
         }
       }
 
-      this.filterChanged()
+      this.reloadList()
     },
     resetFilter() {
       this.filter = {
@@ -324,11 +334,11 @@ export default {
         enabled: null,
         admin: null
       }
-      this.filterChanged()
+      this.reloadList()
     },
     resetKeyword() {
       this.filter.keyword = null
-      this.filterChanged()
+      this.reloadList()
       // remove the userId query parameter from current url
       const { userId, ...query } = this.$route.query
       this.$router.replace({ query })

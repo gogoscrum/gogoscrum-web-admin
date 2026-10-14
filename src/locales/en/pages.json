@@ -7,6 +7,7 @@
   "common": {
     "user": "User",
     "project": "Project",
+    "search": "Search",
     "close": "Close",
     "refresh": "Refresh",
     "delete": "Delete",
@@ -22,6 +23,8 @@
       "updatedTip": "updated at {time}"
     },
     "filter": {
+      "totalElements": "Total {count} items",
+      "matchedResults": "{count} matched results",
       "noMatch": "No matched results",
       "tooManyMatches": "Too many matches, please refine the search"
     }

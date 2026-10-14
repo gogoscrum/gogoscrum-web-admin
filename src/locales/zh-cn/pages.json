@@ -7,6 +7,7 @@
   "common": {
     "user": "用户",
     "project": "项目",
+    "search": "搜索",
     "close": "关闭",
     "refresh": "刷新",
     "delete": "删除",
@@ -22,6 +23,8 @@
       "updatedTip": "更新于 {time}"
     },
     "filter": {
+      "totalElements": "共 {count} 条",
+      "matchedResults": "{count} 个符合条件的结果",
       "noMatch": "没有匹配的结果",
       "tooManyMatches": "匹配结果过多，请细化搜索条件"
     }

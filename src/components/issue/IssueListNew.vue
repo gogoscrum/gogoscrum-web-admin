@@ -8,6 +8,9 @@
         <el-tag v-if="filter.creatorId" type="primary" closable @close="resetCreatorId">
           {{ `${$t('common.createdBy')} ${filter.creatorId}` }}
         </el-tag>
+        <el-tag v-if="filter.keyword" type="primary" closable @close="resetKeyword">
+          {{ `${$t('common.search')} \"${filter.keyword}\"` }}
+        </el-tag>
       </div>
       <div class="right-part">
         <div class="summary-info">
@@ -17,7 +20,11 @@
           <el-icon v-else @click="loadIssues" class="refresh-btn">
             <Refresh />
           </el-icon>
-          <span class="item-count">{{ $t('issueList.header.count', { count: totalElements }) }}</span>
+          <span class="item-count">{{
+            filter.keyword
+              ? $t('common.filter.matchedResults', { count: totalElements })
+              : $t('issueList.header.count', { count: totalElements })
+          }}</span>
         </div>
         <el-form-item class="mb-0!">
           <el-input
@@ -391,7 +398,7 @@ export default {
     },
     sortChange(event) {
       this.filter.orders = utils.getSortOrders(event)
-      this.filterChanged()
+      this.reloadList()
     },
     filterChange(filters) {
       if (filters.types) {
@@ -410,18 +417,18 @@ export default {
         }
       }
 
-      this.filterChanged()
+      this.reloadList()
     },
     keywordChanged() {
       // throttle keyword input changes
-      if (this.inputTimeout) {
-        clearTimeout(this.inputTimeout)
+      if (this.keywordChangeTimeout) {
+        clearTimeout(this.keywordChangeTimeout)
       }
-      this.inputTimeout = setTimeout(() => {
-        this.filterChanged()
+      this.keywordChangeTimeout = setTimeout(() => {
+        this.reloadList()
       }, 500)
     },
-    filterChanged() {
+    reloadList() {
       this.filter.page = 1
       this.loadIssues()
       this.$emit('issueFilterChanged', this.filter)
@@ -432,24 +439,28 @@ export default {
     },
     pageSizeChanged(size) {
       this.filter.pageSize = size
-      this.filterChanged()
+      this.reloadList()
 
       // Emit event to parent component
       this.$emit('pageSizeChanged', size)
     },
     resetProjectId() {
       this.filter.projectId = null
-      this.filterChanged()
+      this.reloadList()
       // remove the projectId query parameter from current url
       const { projectId, ...query } = this.$route.query
       this.$router.replace({ query })
     },
     resetCreatorId() {
       this.filter.creatorId = null
-      this.filterChanged()
+      this.reloadList()
       // remove the creatorId query parameter from current url
       const { creatorId, ...query } = this.$route.query
       this.$router.replace({ query })
+    },
+    resetKeyword() {
+      this.filter.keyword = null
+      this.reloadList()
     },
     editIssue(row) {
       this.editingIssue = row

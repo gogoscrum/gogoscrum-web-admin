@@ -5,6 +5,9 @@
         <el-tag v-if="filter.creatorId" closable type="primary" @close="resetCreatorId">
           {{ `${$t('common.createdBy')} ${filter.creatorId}` }}
         </el-tag>
+        <el-tag v-if="filter.keyword" type="primary" closable @close="resetKeyword">
+          {{ `${$t('common.search')} \"${filter.keyword}\"` }}
+        </el-tag>
       </div>
       <div class="right-part">
         <div class="summary-info">
@@ -27,7 +30,7 @@
             clearable
             prefix-icon="Search"
             :placeholder="$t('docList.header.search')"
-            @input="inputChanged"></el-input>
+            @input="keywordChanged"></el-input>
         </el-form-item>
       </div>
     </div>
@@ -126,6 +129,12 @@ export default {
       otherFlags: [{ text: this.$t('docList.list.public'), value: 'PUBLIC' }]
     }
   },
+  watch: {
+    $route(to, from) {
+      this.filter.creatorId = to.query.creatorId || null
+      this.reloadList()
+    }
+  },
   created() {
     this.filter.creatorId = this.$route.query.creatorId || null
   },
@@ -155,20 +164,20 @@ export default {
       doc.contentLengthFormatted = doc.content ? filesize(doc.content.length, { round: 1 }) : '--'
       return utils.formatCreateUpdateTime(doc)
     },
-    inputChanged() {
+    keywordChanged() {
       // throttle keyword input changes
-      if (this.inputTimeout) {
-        clearTimeout(this.inputTimeout)
+      if (this.keywordChangeTimeout) {
+        clearTimeout(this.keywordChangeTimeout)
       }
-      this.inputTimeout = setTimeout(() => {
-        this.keywordChanged()
+      this.keywordChangeTimeout = setTimeout(() => {
+        this.reloadList()
       }, 500)
     },
-    keywordChanged() {
+    reloadList() {
       this.filter.page = 1
       this.loadDocs()
     },
-    pageChanged: function (page) {
+    pageChanged(page) {
       this.filter.page = page
       this.loadDocs()
     },
@@ -189,18 +198,22 @@ export default {
         }
       }
 
-      this.keywordChanged()
+      this.reloadList()
     },
     sortChange(event) {
       this.filter.orders = utils.getSortOrders(event)
-      this.keywordChanged()
+      this.reloadList()
     },
     resetCreatorId() {
       this.filter.creatorId = null
-      this.keywordChanged()
+      this.reloadList()
       // remove the creatorId query parameter from current url
       const { creatorId, ...query } = this.$route.query
       this.$router.replace({ query })
+    },
+    resetKeyword() {
+      this.filter.keyword = null
+      this.reloadList()
     },
     docClicked(row) {
       this.$router.push({ name: 'DocView', params: { docId: row.id } })

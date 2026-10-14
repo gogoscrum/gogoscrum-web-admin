@@ -28,6 +28,12 @@ export default {
       }
     }
   },
+  watch: {
+    $route(to, from) {
+      this.filter.projectId = to.query.projectId || null
+      this.filter.creatorId = to.query.creatorId || null
+    }
+  },
   created() {
     this.filter.projectId = this.$route.query.projectId || null
     this.filter.creatorId = this.$route.query.creatorId || null

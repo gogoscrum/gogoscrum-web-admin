@@ -8,6 +8,9 @@
         <el-tag v-if="filter.projectId" closable type="primary" @close="resetProjectId">
           {{ `Project ${filter.projectId}` }}
         </el-tag>
+        <el-tag v-if="filter.keyword" type="primary" closable @close="resetKeyword">
+          {{ `${$t('common.search')} \"${filter.keyword}\"` }}
+        </el-tag>
       </div>
       <div class="right-part">
         <div class="summary-info">
@@ -30,7 +33,7 @@
             clearable
             prefix-icon="Search"
             :placeholder="$t('fileList.header.search')"
-            @input="inputChanged"></el-input>
+            @input="keywordChanged"></el-input>
         </el-form-item>
       </div>
     </div>
@@ -213,6 +216,7 @@ export default {
       filter: {
         creatorId: null,
         projectId: null,
+        keyword: null,
         folder: false,
         fileTypes: [],
         targetTypes: [],
@@ -229,6 +233,13 @@ export default {
       fileIdUrlMap: {},
       fileTypeFilters: [],
       targetTypeFilters: []
+    }
+  },
+  watch: {
+    $route(to, from) {
+      this.filter.creatorId = to.query.creatorId || null
+      this.filter.projectId = to.query.projectId || null
+      this.reloadList()
     }
   },
   created() {
@@ -288,16 +299,16 @@ export default {
 
       return util.formatCreateUpdateTime(file)
     },
-    inputChanged() {
+    keywordChanged() {
       // throttle keyword input changes
-      if (this.inputTimeout) {
-        clearTimeout(this.inputTimeout)
+      if (this.keywordChangeTimeout) {
+        clearTimeout(this.keywordChangeTimeout)
       }
-      this.inputTimeout = setTimeout(() => {
-        this.keywordChanged()
+      this.keywordChangeTimeout = setTimeout(() => {
+        this.reloadList()
       }, 500)
     },
-    keywordChanged() {
+    reloadList() {
       this.filter.page = 1
       this.loadFiles()
     },
@@ -308,11 +319,11 @@ export default {
     pageSizeChanged(size) {
       this.filter.pageSize = size
       this.$store.set('fileListPageSize', this.filter.pageSize)
-      this.keywordChanged()
+      this.reloadList()
     },
     sortChange(event) {
       this.filter.orders = util.getSortOrders(event)
-      this.keywordChanged()
+      this.reloadList()
     },
     filterChange(filters) {
       if (filters.fileTypes) {
@@ -331,7 +342,7 @@ export default {
         }
       }
 
-      this.keywordChanged()
+      this.reloadList()
     },
     fileClicked(file) {
       if (file.type === 'IMAGE') {
@@ -375,17 +386,21 @@ export default {
     },
     resetCreatorId() {
       this.filter.creatorId = null
-      this.keywordChanged()
+      this.reloadList()
       // remove the creatorId query parameter from current url
       const { creatorId, ...query } = this.$route.query
       this.$router.replace({ query })
     },
     resetProjectId() {
       this.filter.projectId = null
-      this.keywordChanged()
+      this.reloadList()
       // remove the projectId query parameter from current url
       const { projectId, ...query } = this.$route.query
       this.$router.replace({ query })
+    },
+    resetKeyword() {
+      this.filter.keyword = null
+      this.reloadList()
     }
   }
 }
