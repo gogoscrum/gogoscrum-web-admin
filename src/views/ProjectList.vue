@@ -22,6 +22,11 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <div class="column-setting-menu-content">
+                  <div>
+                    <el-checkbox :model-value="isAllColumnsSelected" @change="togglAllColumns">
+                      {{ $t('common.selectAll') }}
+                    </el-checkbox>
+                  </div>
                   <el-checkbox-group v-model="columns" @change="columnsChanged">
                     <div v-for="item in availableColumns" :key="item.key">
                       <el-checkbox :value="item.key" :disabled="item.readonly">
@@ -239,17 +244,17 @@ export default {
   },
   data() {
     const availableColumns = [
-      { key: 'name', labelKey: 'projectList.list.name', readonly: true },
-      { key: 'code', labelKey: 'projectList.list.code' },
-      { key: 'creator', labelKey: 'common.createdBy' },
-      { key: 'createdTime', labelKey: 'common.createdTime' },
+      { key: 'name', labelKey: 'projectList.list.name', default: true, readonly: true },
+      { key: 'code', labelKey: 'projectList.list.code', default: true },
+      { key: 'creator', labelKey: 'common.createdBy', default: true },
+      { key: 'createdTime', labelKey: 'common.createdTime', default: true },
       { key: 'owner', labelKey: 'projectList.list.owner' },
       { key: 'lastIssueSeq', labelKey: 'projectList.list.lastIssueSeq' },
       { key: 'fileCount', labelKey: 'projectList.list.fileCount' },
       { key: 'totalFileSize', labelKey: 'projectList.list.totalFileSize' },
-      { key: 'actions', labelKey: 'common.actions', readonly: true }
+      { key: 'actions', labelKey: 'common.actions', default: true, readonly: true }
     ]
-    const defaultColumns = ['name', 'code', 'creator', 'createdTime', 'actions']
+    const defaultColumns = availableColumns.filter((column) => column.default).map((column) => column.key)
 
     return {
       currentUser: {},
@@ -281,6 +286,11 @@ export default {
     this.filter.creatorId = this.$route.query.creatorId || null
     this.currentUser = this.$store.get('user')
     this.loadProjects()
+  },
+  computed: {
+    isAllColumnsSelected() {
+      return this.availableColumns.every((column) => this.columns.includes(column.key))
+    }
   },
   mounted() {},
   methods: {
@@ -343,6 +353,12 @@ export default {
       this.filter.pageSize = size
       this.$store.set('adminProjectListPageSize', this.filter.pageSize)
       this.reloadList()
+    },
+    togglAllColumns(checked) {
+      const allColumnKeys = this.availableColumns.map((column) => column.key)
+      const readonlyColumns = this.availableColumns.filter((column) => column.readonly).map((column) => column.key)
+      this.columns = checked ? allColumnKeys : readonlyColumns
+      this.columnsChanged()
     },
     columnsChanged() {
       this.$store.set('adminProjectListColumns', this.columns)
