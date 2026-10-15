@@ -17,22 +17,10 @@
           <el-icon v-else @click="loadUsers" class="refresh-btn">
             <Refresh />
           </el-icon>
-          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
-            <el-icon class="column-setting-btn"><Setting /></el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <div class="column-setting-menu-content">
-                  <el-checkbox-group v-model="columns" @change="columnsChanged">
-                    <div v-for="item in availableColumns" :key="item.key">
-                      <el-checkbox :value="item.key" :disabled="item.readonly">
-                        {{ $t(item.labelKey) }}
-                      </el-checkbox>
-                    </div>
-                  </el-checkbox-group>
-                </div>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <column-selector
+            v-model="columns"
+            :available-columns="availableColumns"
+            store-key="adminUserListColumns"></column-selector>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -178,22 +166,24 @@ import highlight from '@/utils/highlight.js'
 import UserEditDialog from '@/components/user/UserEdit.vue'
 import { ElMessage } from 'element-plus'
 import UserMiniCard from '@/components/user/UserMiniCard.vue'
+import ColumnSelector from '@/components/common/ColumnSelector.vue'
 
 export default {
   name: 'UserList',
   components: {
     UserEditDialog,
-    UserMiniCard
+    UserMiniCard,
+    ColumnSelector
   },
   data() {
     const availableColumns = [
-      { key: 'nickname', labelKey: 'userList.list.nickname', readonly: true },
-      { key: 'username', labelKey: 'userList.list.username' },
-      { key: 'createdTime', labelKey: 'common.createdTime' },
-      { key: 'lastLoginTime', labelKey: 'userList.list.lastLoginTime' },
-      { key: 'actions', labelKey: 'common.actions', readonly: true }
+      { key: 'nickname', labelKey: 'userList.list.nickname', default: true, readonly: true },
+      { key: 'username', labelKey: 'userList.list.username', default: true },
+      { key: 'createdTime', labelKey: 'common.createdTime', default: true },
+      { key: 'lastLoginTime', labelKey: 'userList.list.lastLoginTime', default: true },
+      { key: 'actions', labelKey: 'common.actions', default: true, readonly: true }
     ]
-    const defaultColumns = ['nickname', 'username', 'createdTime', 'lastLoginTime', 'actions']
+    const defaultColumns = availableColumns.filter((column) => column.default).map((column) => column.key)
 
     return {
       currentUser: {},
@@ -349,9 +339,6 @@ export default {
       this.filter.pageSize = size
       this.$store.set('userListPageSize', this.filter.pageSize)
       this.reloadList()
-    },
-    columnsChanged() {
-      this.$store.set('adminUserListColumns', this.columns)
     },
     filterChange(filters) {
       if (filters.userFlag) {

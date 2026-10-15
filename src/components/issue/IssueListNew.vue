@@ -20,22 +20,11 @@
           <el-icon v-else @click="loadIssues" class="refresh-btn">
             <Refresh />
           </el-icon>
-          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
-            <el-icon class="column-setting-btn"><Setting /></el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <div class="column-setting-menu-content">
-                  <el-checkbox-group v-model="selectedColumns" @change="columnsChanged">
-                    <div v-for="item in availableColumns" :key="item.key">
-                      <el-checkbox :value="item.key" :disabled="item.readonly">
-                        {{ $t(item.labelKey) }}
-                      </el-checkbox>
-                    </div>
-                  </el-checkbox-group>
-                </div>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <column-selector
+            v-model="selectedColumns"
+            :available-columns="availableColumns"
+            store-key="adminIssueListColumns"
+            @update:model-value="columnsChanged"></column-selector>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -272,6 +261,7 @@ import StatusTag from '@/components/common/StatusTag.vue'
 import IssueTag from '@/components/common/IssueTag.vue'
 import StoryPoint from '@/components/common/StoryPoint.vue'
 import UserMiniCard from '@/components/user/UserMiniCard.vue'
+import ColumnSelector from '@/components/common/ColumnSelector.vue'
 
 export default {
   name: 'IssueList',
@@ -283,22 +273,13 @@ export default {
     StatusTag,
     IssueTag,
     StoryPoint,
-    UserMiniCard
+    UserMiniCard,
+    ColumnSelector
   },
   props: {
     columns: {
       type: Array,
-      default: () => [
-        'code',
-        'name',
-        'projectName',
-        'priority',
-        'storyPoints',
-        'status',
-        'creator',
-        'createdTime',
-        'owner'
-      ]
+      default: () => []
     },
     filterColumns: {
       type: Array,
@@ -324,18 +305,20 @@ export default {
   emits: ['pageSizeChanged', 'issueFilterChanged', 'columnsChanged'],
   data() {
     const availableColumns = [
-      { key: 'code', labelKey: 'issueList.list.code', readonly: true },
-      { key: 'name', labelKey: 'issueList.list.name', readonly: true },
-      { key: 'projectName', labelKey: 'issueList.list.projectName' },
+      { key: 'code', labelKey: 'issueList.list.code', default: true, readonly: true },
+      { key: 'name', labelKey: 'issueList.list.name', default: true, readonly: true },
+      { key: 'projectName', labelKey: 'issueList.list.projectName', default: true },
       { key: 'sprint', labelKey: 'issueList.list.sprint' },
       { key: 'component', labelKey: 'issueList.list.component' },
-      { key: 'priority', labelKey: 'issueList.list.priority' },
-      { key: 'storyPoints', labelKey: 'issueList.list.storyPoints' },
-      { key: 'status', labelKey: 'issueList.list.status' },
-      { key: 'creator', labelKey: 'common.createdBy' },
-      { key: 'createdTime', labelKey: 'common.createdTime' },
-      { key: 'owner', labelKey: 'issueList.list.assignee' }
+      { key: 'priority', labelKey: 'issueList.list.priority', default: true },
+      { key: 'storyPoints', labelKey: 'issueList.list.storyPoints', default: true },
+      { key: 'status', labelKey: 'issueList.list.status', default: true },
+      { key: 'creator', labelKey: 'common.createdBy', default: true },
+      { key: 'createdTime', labelKey: 'common.createdTime', default: true },
+      { key: 'owner', labelKey: 'issueList.list.assignee', default: true }
     ]
+
+    const defaultColumns = availableColumns.filter((column) => column.default).map((column) => column.key)
 
     return {
       currentUser: this.$store.get('user'),
@@ -350,7 +333,7 @@ export default {
       issueTypeFilters: [],
       priorityFilters: [],
       availableColumns,
-      selectedColumns: this.columns
+      selectedColumns: this.columns?.length ? this.columns : defaultColumns
     }
   },
   computed: {},
@@ -480,8 +463,8 @@ export default {
       // Emit event to parent component
       this.$emit('pageSizeChanged', size)
     },
-    columnsChanged() {
-      this.$emit('columnsChanged', this.selectedColumns)
+    columnsChanged(columns) {
+      this.$emit('columnsChanged', columns)
     },
     resetProjectId() {
       this.filter.projectId = null

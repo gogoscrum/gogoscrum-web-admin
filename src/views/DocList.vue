@@ -17,22 +17,10 @@
           <el-icon v-else @click="loadDocs" class="refresh-btn">
             <Refresh />
           </el-icon>
-          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
-            <el-icon class="column-setting-btn"><Setting /></el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <div class="column-setting-menu-content">
-                  <el-checkbox-group v-model="columns" @change="columnsChanged">
-                    <div v-for="item in availableColumns" :key="item.key">
-                      <el-checkbox :value="item.key" :disabled="item.readonly">
-                        {{ $t(item.labelKey) }}
-                      </el-checkbox>
-                    </div>
-                  </el-checkbox-group>
-                </div>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <column-selector
+            v-model="columns"
+            :available-columns="availableColumns"
+            store-key="adminDocListColumns"></column-selector>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -130,20 +118,22 @@ import highlight from '@/utils/highlight.js'
 import utils from '@/utils/util.js'
 import { filesize } from 'filesize'
 import UserMiniCard from '@/components/user/UserMiniCard.vue'
+import ColumnSelector from '@/components/common/ColumnSelector.vue'
 
 export default {
   name: 'DocList',
   components: {
-    UserMiniCard
+    UserMiniCard,
+    ColumnSelector
   },
   data() {
     const availableColumns = [
-      { key: 'name', labelKey: 'docList.list.name', readonly: true },
-      { key: 'creator', labelKey: 'common.createdBy' },
-      { key: 'createdTime', labelKey: 'common.createdTime' },
-      { key: 'length', labelKey: 'docList.list.length' }
+      { key: 'name', labelKey: 'docList.list.name', default: true, readonly: true },
+      { key: 'creator', labelKey: 'common.createdBy', default: true },
+      { key: 'createdTime', labelKey: 'common.createdTime', default: true },
+      { key: 'length', labelKey: 'docList.list.length', default: true }
     ]
-    const defaultColumns = ['name', 'creator', 'createdTime', 'length']
+    const defaultColumns = availableColumns.filter((column) => column.default).map((column) => column.key)
 
     return {
       docs: [],
@@ -219,9 +209,6 @@ export default {
       this.filter.page = 1
       this.$store.set('docListPageSize', this.filter.pageSize)
       this.loadDocs()
-    },
-    columnsChanged() {
-      this.$store.set('adminDocListColumns', this.columns)
     },
     filterChange(filters) {
       if (filters.otherFlags) {

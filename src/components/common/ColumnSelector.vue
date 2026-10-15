@@ -1,0 +1,115 @@
+<template>
+  <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
+    <el-icon class="column-setting-btn"><Setting /></el-icon>
+    <template #dropdown>
+      <el-dropdown-menu>
+        <div class="column-setting-menu-content">
+          <div>
+            <el-checkbox :model-value="isAllColumnsSelected" @change="toggleAllColumns">
+              {{ $t('common.selectAll') }}
+            </el-checkbox>
+          </div>
+          <el-checkbox-group v-model="selectedColumns">
+            <div v-for="item in availableColumns" :key="item.key">
+              <el-checkbox :value="item.key" :disabled="item.readonly">
+                {{ $t(item.labelKey) }}
+              </el-checkbox>
+            </div>
+          </el-checkbox-group>
+        </div>
+      </el-dropdown-menu>
+    </template>
+  </el-dropdown>
+</template>
+
+<script>
+export default {
+  name: 'ColumnSelector',
+  props: {
+    availableColumns: {
+      type: Array,
+      required: true
+    },
+    modelValue: {
+      type: Array,
+      default: () => []
+    },
+    storeKey: {
+      type: String,
+      required: true
+    }
+  },
+  created() {
+    this.persistColumns(this.modelValue)
+  },
+  computed: {
+    selectedColumns: {
+      get() {
+        return this.normalizeColumns(this.modelValue)
+      },
+      set(columns) {
+        this.persistColumns(columns)
+      }
+    },
+    isAllColumnsSelected() {
+      const currentColumns = this.selectedColumns
+      return this.availableColumns.every((column) => currentColumns.includes(column.key))
+    }
+  },
+  watch: {
+    availableColumns: {
+      handler() {
+        this.persistColumns(this.modelValue)
+      },
+      deep: true
+    }
+  },
+  methods: {
+    getReadonlyColumns() {
+      return this.availableColumns.filter((column) => column.readonly).map((column) => column.key)
+    },
+    getDefaultColumns() {
+      return this.availableColumns.filter((column) => column.default || column.readonly).map((column) => column.key)
+    },
+    normalizeColumns(columns) {
+      const requestedColumns = Array.isArray(columns) ? columns : []
+      const availableColumnKeys = new Set(this.availableColumns.map((column) => column.key))
+      const selectedColumns = new Set()
+
+      requestedColumns.forEach((columnKey) => {
+        if (availableColumnKeys.has(columnKey)) {
+          selectedColumns.add(columnKey)
+        }
+      })
+
+      this.getReadonlyColumns().forEach((columnKey) => selectedColumns.add(columnKey))
+
+      if (selectedColumns.size === 0) {
+        this.getDefaultColumns().forEach((columnKey) => selectedColumns.add(columnKey))
+      }
+
+      return this.availableColumns
+        .map((column) => column.key)
+        .filter((columnKey) => selectedColumns.has(columnKey))
+    },
+    persistColumns(columns) {
+      const normalizedColumns = this.normalizeColumns(columns)
+      const currentColumns = Array.isArray(this.modelValue) ? this.modelValue : []
+      const isSameColumns =
+        currentColumns.length === normalizedColumns.length &&
+        currentColumns.every((column, index) => column === normalizedColumns[index])
+      if (isSameColumns) {
+        return
+      }
+
+      this.$emit('update:modelValue', normalizedColumns)
+      this.$store.set(this.storeKey, normalizedColumns)
+    },
+    toggleAllColumns(checked) {
+      const allColumns = this.availableColumns.map((column) => column.key)
+      const readonlyColumns = this.getReadonlyColumns()
+      this.persistColumns(checked ? allColumns : readonlyColumns)
+    }
+  }
+}
+</script>

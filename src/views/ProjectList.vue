@@ -17,27 +17,10 @@
           <el-icon v-else @click="loadProjects" class="refresh-btn">
             <Refresh />
           </el-icon>
-          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
-            <el-icon class="column-setting-btn"><Setting /></el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <div class="column-setting-menu-content">
-                  <div>
-                    <el-checkbox :model-value="isAllColumnsSelected" @change="togglAllColumns">
-                      {{ $t('common.selectAll') }}
-                    </el-checkbox>
-                  </div>
-                  <el-checkbox-group v-model="columns" @change="columnsChanged">
-                    <div v-for="item in availableColumns" :key="item.key">
-                      <el-checkbox :value="item.key" :disabled="item.readonly">
-                        {{ $t(item.labelKey) }}
-                      </el-checkbox>
-                    </div>
-                  </el-checkbox-group>
-                </div>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <column-selector
+            v-model="columns"
+            :available-columns="availableColumns"
+            store-key="adminProjectListColumns"></column-selector>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -234,13 +217,15 @@ import Avatar from '@/components/common/Avatar.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { filesize } from 'filesize'
 import UserMiniCard from '@/components/user/UserMiniCard.vue'
+import ColumnSelector from '@/components/common/ColumnSelector.vue'
 
 export default {
   name: 'ProjectList',
   components: {
     TransferProjectDialog,
     Avatar,
-    UserMiniCard
+    UserMiniCard,
+    ColumnSelector
   },
   data() {
     const availableColumns = [
@@ -286,11 +271,6 @@ export default {
     this.filter.creatorId = this.$route.query.creatorId || null
     this.currentUser = this.$store.get('user')
     this.loadProjects()
-  },
-  computed: {
-    isAllColumnsSelected() {
-      return this.availableColumns.every((column) => this.columns.includes(column.key))
-    }
   },
   mounted() {},
   methods: {
@@ -353,15 +333,6 @@ export default {
       this.filter.pageSize = size
       this.$store.set('adminProjectListPageSize', this.filter.pageSize)
       this.reloadList()
-    },
-    togglAllColumns(checked) {
-      const allColumnKeys = this.availableColumns.map((column) => column.key)
-      const readonlyColumns = this.availableColumns.filter((column) => column.readonly).map((column) => column.key)
-      this.columns = checked ? allColumnKeys : readonlyColumns
-      this.columnsChanged()
-    },
-    columnsChanged() {
-      this.$store.set('adminProjectListColumns', this.columns)
     },
     filterChange(filters) {
       if (filters.otherFlags) {

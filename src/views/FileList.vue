@@ -20,22 +20,10 @@
           <el-icon v-else @click="loadFiles" class="refresh-btn">
             <Refresh />
           </el-icon>
-          <el-dropdown trigger="click" :teleported="false" :hide-on-click="false">
-            <el-icon class="column-setting-btn"><Setting /></el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <div class="column-setting-menu-content">
-                  <el-checkbox-group v-model="columns" @change="columnsChanged">
-                    <div v-for="item in availableColumns" :key="item.key">
-                      <el-checkbox :value="item.key" :disabled="item.readonly">
-                        {{ $t(item.labelKey) }}
-                      </el-checkbox>
-                    </div>
-                  </el-checkbox-group>
-                </div>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <column-selector
+            v-model="columns"
+            :available-columns="availableColumns"
+            store-key="adminFileListColumns"></column-selector>
           <span class="item-count">{{
             filter.keyword
               ? $t('common.filter.matchedResults', { count: totalElements })
@@ -219,6 +207,7 @@ import PdfViewer from '@/components/common/PdfViewer.vue'
 import util from '@/utils/util.js'
 import dict from '@/locales/zh-cn/dict.json'
 import UserMiniCard from '@/components/user/UserMiniCard.vue'
+import ColumnSelector from '@/components/common/ColumnSelector.vue'
 
 export default {
   name: 'FileList',
@@ -226,20 +215,21 @@ export default {
     FileIcon,
     OfficeViewer,
     PdfViewer,
-    UserMiniCard
+    UserMiniCard,
+    ColumnSelector
   },
   data() {
     const availableColumns = [
-      { key: 'name', labelKey: 'fileList.list.name', readonly: true },
-      { key: 'fileType', labelKey: 'fileList.list.fileType' },
-      { key: 'targetType', labelKey: 'fileList.list.targetType' },
-      { key: 'creator', labelKey: 'common.createdBy' },
-      { key: 'createdTime', labelKey: 'common.createdTime' },
+      { key: 'name', labelKey: 'fileList.list.name', default: true, readonly: true },
+      { key: 'fileType', labelKey: 'fileList.list.fileType', default: true },
+      { key: 'targetType', labelKey: 'fileList.list.targetType', default: true },
+      { key: 'creator', labelKey: 'common.createdBy', default: true },
+      { key: 'createdTime', labelKey: 'common.createdTime', default: true },
       { key: 'storage', labelKey: 'fileList.list.storage' },
-      { key: 'size', labelKey: 'fileList.list.size' },
-      { key: 'actions', labelKey: 'common.actions', readonly: true }
+      { key: 'size', labelKey: 'fileList.list.size', default: true },
+      { key: 'actions', labelKey: 'common.actions', default: true, readonly: true }
     ]
-    const defaultColumns = ['name', 'fileType', 'targetType', 'creator', 'createdTime', 'size', 'actions']
+    const defaultColumns = availableColumns.filter((column) => column.default).map((column) => column.key)
 
     return {
       dict: dict,
@@ -356,9 +346,6 @@ export default {
       this.filter.pageSize = size
       this.$store.set('fileListPageSize', this.filter.pageSize)
       this.reloadList()
-    },
-    columnsChanged() {
-      this.$store.set('adminFileListColumns', this.columns)
     },
     sortChange(event) {
       this.filter.orders = util.getSortOrders(event)
