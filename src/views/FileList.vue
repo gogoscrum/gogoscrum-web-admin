@@ -290,20 +290,23 @@ export default {
     },
     loadFiles() {
       this.loading = true
-      fileApi.search(this.filter).then((res) => {
-        const results = highlight.highlight(res.data.results, this.filter.keyword, 'name')
-        results.forEach((file) => {
-          this.formatFile(file)
+      fileApi
+        .search(this.filter)
+        .then((res) => {
+          const results = highlight.highlight(res.data.results, this.filter.keyword, 'name')
+          results.forEach((file) => {
+            this.formatFile(file)
+          })
+          this.files = results
+          this.totalElements = res.data.totalElements
+          this.totalPages = res.data.totalPages
         })
-        this.files = results
-        this.totalElements = res.data.totalElements
-        this.totalPages = res.data.totalPages
-
-        // Delay a little bit to improve user experience
-        setTimeout(() => {
-          this.loading = false
-        }, 200)
-      })
+        .finally(() => {
+          // Delay a little bit to improve user experience
+          setTimeout(() => {
+            this.loading = false
+          }, 200)
+        })
     },
     formatFile(file) {
       if (file.size) {
