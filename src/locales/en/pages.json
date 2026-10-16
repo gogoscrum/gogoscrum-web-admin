@@ -57,7 +57,23 @@
       "user": "Users",
       "issue": "Issues",
       "file": "Files",
-      "doc": "Documents"
+      "doc": "Documents",
+      "setting": "Settings"
+    }
+  },
+  "settingEdit": {
+    "title": "System Settings",
+    "tabs": {
+      "user": "Users"
+    },
+    "fields": {
+      "allowSignup": {
+        "label": "Allow new user registration",
+        "description": "When enabled, visitors can create accounts by self-service signup."
+      }
+    },
+    "msg": {
+      "saveSuccess": "System settings saved"
     }
   },
   "issueEdit": {

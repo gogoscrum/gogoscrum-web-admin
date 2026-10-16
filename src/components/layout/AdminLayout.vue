@@ -47,6 +47,15 @@
             ><span>{{ $t('adminLayout.menu.doc') }}</span></template
           >
         </el-menu-item>
+        <el-menu-item
+          index="SettingEdit"
+          :route="{ name: 'SettingEdit' }"
+          :class="$route.name == 'SettingEdit' ? 'menu-selected' : ''">
+          <el-icon><Setting /></el-icon>
+          <template #title
+            ><span>{{ $t('adminLayout.menu.setting') }}</span></template
+          >
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-main class="main-content">

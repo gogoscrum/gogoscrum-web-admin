@@ -57,7 +57,23 @@
       "user": "用户",
       "issue": "任务",
       "file": "文件",
-      "doc": "文档"
+      "doc": "文档",
+      "setting": "设置"
+    }
+  },
+  "settingEdit": {
+    "title": "系统设置",
+    "tabs": {
+      "user": "用户"
+    },
+    "fields": {
+      "allowSignup": {
+        "label": "允许注册新用户",
+        "description": "开启后，访客可以通过注册页面自助创建用户账号。"
+      }
+    },
+    "msg": {
+      "saveSuccess": "系统设置已保存"
     }
   },
   "issueEdit": {

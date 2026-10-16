@@ -57,6 +57,11 @@ const routes = [
             path: 'docs/:docId',
             name: 'DocView',
             component: () => import('@/views/DocView.vue')
+          },
+          {
+            path: 'settings',
+            name: 'SettingEdit',
+            component: () => import('@/views/SettingEdit.vue')
           }
         ]
       }
