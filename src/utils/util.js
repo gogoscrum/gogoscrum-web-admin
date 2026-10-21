@@ -88,13 +88,13 @@ const afterLogin = (user) => {
 }
 
 const getSortOrders = (event) => {
-  console.log('table sorting event:', event)
+  const sortBy = event.column.sortBy || event.prop
 
-  if (!event.column.sortBy) {
-    console.error('Column sort-by value not set', event)
+  if (!sortBy) {
+    console.error('Column sort-by or prop value not set', event)
   } else if (event.order) {
     // Support multi-column sorting by allowing comma-separated sortBy values, e.g. "project.code, code"
-    return event.column.sortBy.split(',').map((s) => {
+    return sortBy.split(',').map((s) => {
       return {
         property: s.trim(),
         direction: event.order === 'ascending' ? 'ASC' : 'DESC'

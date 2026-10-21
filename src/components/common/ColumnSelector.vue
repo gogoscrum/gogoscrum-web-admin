@@ -4,10 +4,13 @@
     <template #dropdown>
       <el-dropdown-menu>
         <div class="column-setting-menu-content">
-          <div>
+          <div class="column-setting-header">
             <el-checkbox :model-value="isAllColumnsSelected" @change="toggleAllColumns">
               {{ $t('common.selectAll') }}
             </el-checkbox>
+            <el-button type="primary" text link @click="restoreDefaultColumns">
+              {{ $t('common.restoreDefault') }}
+            </el-button>
           </div>
           <el-checkbox-group v-model="selectedColumns">
             <div v-for="item in availableColumns" :key="item.key">
@@ -109,7 +112,31 @@ export default {
       const allColumns = this.availableColumns.map((column) => column.key)
       const readonlyColumns = this.getReadonlyColumns()
       this.persistColumns(checked ? allColumns : readonlyColumns)
+    },
+    restoreDefaultColumns() {
+      this.persistColumns(this.getDefaultColumns())
     }
   }
 }
 </script>
+
+<style lang="less" scoped>
+.column-setting-btn {
+  margin-right: 16px;
+  font-size: 15px;
+  cursor: pointer;
+  color: #999;
+}
+
+.column-setting-menu-content {
+  padding: 8px 20px;
+  min-width: 130px;
+}
+
+.column-setting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+</style>
