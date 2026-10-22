@@ -41,7 +41,7 @@
       "missingUsername": "Please input your user name",
       "missingPassword": "Please input your password",
       "badCrendential": "Wrong user name or password",
-      "notAdmin": "You are not an admin"
+      "notAdmin": "No access permission"
     }
   },
   "baseLayout": {

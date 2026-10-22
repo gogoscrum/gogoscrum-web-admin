@@ -41,7 +41,7 @@
       "missingUsername": "请输入用户名",
       "missingPassword": "请输入密码",
       "badCrendential": "用户名或者密码错误",
-      "notAdmin": "您不是管理员"
+      "notAdmin": "您没有管理员权限"
     }
   },
   "baseLayout": {
