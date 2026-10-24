@@ -112,7 +112,12 @@
             {{ scope.row.createdTimeFormatted }}
           </template>
         </el-table-column>
-        <el-table-column v-if="columns.includes('owner')" :label="$t('projectList.list.owner')" min-width="130">
+        <el-table-column
+          v-if="columns.includes('owner')"
+          sortable="custom"
+          sort-by="owner.nickname, createdTime"
+          :label="$t('projectList.list.owner')"
+          min-width="130">
           <template #default="scope">
             <UserMiniCard :user="scope.row.owner" />
           </template>

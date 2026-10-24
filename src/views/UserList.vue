@@ -192,7 +192,7 @@ export default {
         keyword: null,
         orders: [],
         page: 1,
-        pageSize: this.$store.get('userListPageSize') || 10
+        pageSize: this.$store.get('adminUserListPageSize') || 10
       },
       totalElements: 0,
       totalPages: 0,
@@ -337,7 +337,7 @@ export default {
     },
     pageSizeChanged(size) {
       this.filter.pageSize = size
-      this.$store.set('userListPageSize', this.filter.pageSize)
+      this.$store.set('adminUserListPageSize', this.filter.pageSize)
       this.reloadList()
     },
     filterChange(filters) {
@@ -360,7 +360,7 @@ export default {
     resetFilter() {
       this.filter = {
         page: 1,
-        pageSize: this.$store.get('userListPageSize') || 10,
+        pageSize: this.$store.get('adminUserListPageSize') || 10,
         orders: [],
         enabled: null,
         admin: null

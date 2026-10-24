@@ -24,7 +24,7 @@ export default {
         projectId: null,
         creatorId: null,
         page: 1,
-        pageSize: this.$store.get('issueListPageSize') || 10
+        pageSize: this.$store.get('adminIssueListPageSize') || 10
       }
     }
   },
@@ -42,7 +42,7 @@ export default {
     pageSizeChanged(size) {
       // Update the local store for issue list page size.
       // Don't need to handle the pagination as the IssueList component will handle it.
-      this.$store.set('issueListPageSize', size)
+      this.$store.set('adminIssueListPageSize', size)
     }
   }
 }

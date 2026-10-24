@@ -245,7 +245,7 @@ export default {
         fileTypes: [],
         targetTypes: [],
         page: 1,
-        pageSize: this.$store.get('fileListPageSize') || 10
+        pageSize: this.$store.get('adminFileListPageSize') || 10
       },
       totalElements: 0,
       totalPages: 0,
@@ -347,7 +347,7 @@ export default {
     },
     pageSizeChanged(size) {
       this.filter.pageSize = size
-      this.$store.set('fileListPageSize', this.filter.pageSize)
+      this.$store.set('adminFileListPageSize', this.filter.pageSize)
       this.reloadList()
     },
     sortChange(event) {

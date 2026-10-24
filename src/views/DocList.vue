@@ -87,6 +87,8 @@
           v-if="columns.includes('length')"
           prop="contentLengthFormatted"
           :label="$t('docList.list.length')"
+          sortable="custom"
+          sort-by="size, createdTime"
           min-width="80"
           align="right">
         </el-table-column>
@@ -142,7 +144,7 @@ export default {
         keyword: null,
         publicAccess: null,
         page: 1,
-        pageSize: this.$store.get('docListPageSize') || 10
+        pageSize: this.$store.get('adminDocListPageSize') || 10
       },
       totalElements: 0,
       totalPages: 0,
@@ -184,7 +186,8 @@ export default {
         })
     },
     formatDoc(doc) {
-      doc.contentLengthFormatted = doc.content ? filesize(doc.content.length, { round: 1 }) : '--'
+      const docSize = Number(doc.size)
+      doc.contentLengthFormatted = Number.isFinite(docSize) ? filesize(docSize, { round: 1 }) : '--'
       return utils.formatCreateUpdateTime(doc)
     },
     keywordChanged() {
@@ -207,7 +210,7 @@ export default {
     pageSizeChanged(size) {
       this.filter.pageSize = size
       this.filter.page = 1
-      this.$store.set('docListPageSize', this.filter.pageSize)
+      this.$store.set('adminDocListPageSize', this.filter.pageSize)
       this.loadDocs()
     },
     filterChange(filters) {
