@@ -5,6 +5,7 @@ export const projectApi = {
   getById: (id) => get(`/api/projects/${id}`),
   search: (filter) => post('/api/projects/search', filter),
   delete: (id) => del(`/api/projects/${id}`),
+  restore: (id) => post(`/api/projects/${id}/restore`),
   transferTo: (projectId, userId) => put(`/api/projects/${projectId}/owner?userId=${userId}`),
   archive: (id) => post(`/api/projects/${id}/archive`),
   unarchive: (id) => del(`/api/projects/${id}/archive`),

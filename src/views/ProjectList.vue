@@ -72,6 +72,9 @@
                   <el-tag v-if="scope.row.archived" type="warning" effect="plain" size="small" class="ml-2">
                     {{ $t('projectList.list.archived') }}
                   </el-tag>
+                  <el-tag v-if="scope.row.deleted" type="danger" effect="plain" size="small" class="ml-2">
+                    {{ $t('projectList.list.deleted') }}
+                  </el-tag>
                 </div>
                 <div v-if="scope.row.description" class="desc project-desc">
                   {{ scope.row.description }}
@@ -174,11 +177,17 @@
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item icon="Right" @click="transferProject(scope.row)">{{
+                  <el-dropdown-item :disabled="scope.row.deleted" icon="Right" @click="transferProject(scope.row)">{{
                     $t('projectList.list.transfer')
                   }}</el-dropdown-item>
-                  <el-dropdown-item icon="Delete" @click="deleteProject(scope.$index, scope.row)">{{
-                    $t('common.delete')
+                  <el-dropdown-item
+                    v-if="!scope.row.deleted"
+                    icon="Delete"
+                    @click="deleteProject(scope.$index, scope.row)"
+                    >{{ $t('common.delete') }}</el-dropdown-item
+                  >
+                  <el-dropdown-item v-else icon="RefreshLeft" @click="restoreProject(scope.$index, scope.row)">{{
+                    $t('common.restore')
                   }}</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -253,6 +262,8 @@ export default {
         creatorId: null,
         keyword: null,
         global: true,
+        deleted: null,
+        archived: null,
         orders: [],
         page: 1,
         pageSize: this.$store.get('adminProjectListPageSize') || 10
@@ -261,7 +272,10 @@ export default {
       totalPages: 0,
       loading: true,
       transferringProject: null,
-      otherFlags: [{ text: this.$t('projectList.list.archived'), value: 'ARCHIVED' }],
+      otherFlags: [
+        { text: this.$t('projectList.list.archived'), value: 'ARCHIVED' },
+        { text: this.$t('projectList.list.deleted'), value: 'DELETED' }
+      ],
       columns: this.$store.get('adminProjectListColumns') || defaultColumns,
       availableColumns: availableColumns
     }
@@ -346,6 +360,12 @@ export default {
         } else {
           this.filter.archived = null
         }
+
+        if (filters.otherFlags.includes('DELETED')) {
+          this.filter.deleted = true
+        } else {
+          this.filter.deleted = null
+        }
       }
 
       this.reloadList()
@@ -366,14 +386,6 @@ export default {
         this.projects.unshift(project)
       }
     },
-    projectDeleted(project) {
-      let index = utils.indexInArray(this.projects, project.id)
-
-      if (index >= 0) {
-        this.projects.splice(index, 1)
-        this.totalElements--
-      }
-    },
     deleteProject: function (index, row) {
       ElMessageBox.confirm(
         this.$t('projectList.msg.delConfirmMsg', { projectName: row.name }),
@@ -391,12 +403,22 @@ export default {
                 projectName: row.name
               })
             })
-            this.projectDeleted(row)
+            row.deleted = true
           })
         })
         .catch((err) => {
           // Cancelled, do nothing
         })
+    },
+    restoreProject: function (index, row) {
+      projectApi.restore(row.id).then((res) => {
+        ElMessage.success({
+          message: this.$t('projectList.msg.restoreSuccess', {
+            projectName: row.name
+          })
+        })
+        row.deleted = false
+      })
     },
     resetKeyword() {
       this.filter.keyword = null

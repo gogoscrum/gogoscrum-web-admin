@@ -13,6 +13,7 @@
     "selectAll": "选择全部",
     "restoreDefault": "默认",
     "delete": "删除",
+    "restore": "恢复",
     "cancel": "取消",
     "download": "下载",
     "save": "保存",
@@ -193,12 +194,14 @@
       "owner": "所有者",
       "transfer": "移交",
       "archived": "已归档",
+      "deleted": "已删除",
       "noProject": "系统中还没有任何项目"
     },
     "msg": {
       "delConfirmTitle": "删除项目",
       "delConfirmMsg": "您即将删除项目 <strong class=\"red\">\"{projectName}\"</strong>，删除后将无法再访问该项目及其数据，是否继续？",
-      "delSuccess": "项目 \"{projectName}\" 删除成功"
+      "delSuccess": "项目 \"{projectName}\" 删除成功",
+      "restoreSuccess": "项目 \"{projectName}\" 恢复成功"
     }
   },
   "userList": {
